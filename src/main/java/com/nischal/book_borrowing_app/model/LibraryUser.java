@@ -9,13 +9,13 @@ public class LibraryUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Integer id;
+    private Integer id;
 
     @Column(name = "username")
-    String username;
+    private String username;
 
     @Column(name = "password")
-    String password;
+    private String password;
 
     public Integer getId() {
         return id;
