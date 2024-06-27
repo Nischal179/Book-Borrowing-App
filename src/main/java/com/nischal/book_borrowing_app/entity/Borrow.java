@@ -27,5 +27,4 @@ public class Borrow {
 
     private LocalDate borrowDate;
 
-
 }
