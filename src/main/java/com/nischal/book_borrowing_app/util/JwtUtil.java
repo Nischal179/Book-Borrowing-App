@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
-    private final SecretKey secretKey = (Keys.hmacShaKeyFor("mysecretmysecretmysecretmysecret".getBytes()));
+    private static final SecretKey secretKey = (Keys.hmacShaKeyFor("mysecretmysecretmysecretmysecret".getBytes()));
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
@@ -39,7 +39,7 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private static String createToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -50,7 +50,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateToken(String username) {
+    public static String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
