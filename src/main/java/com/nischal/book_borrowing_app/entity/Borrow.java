@@ -18,11 +18,11 @@ public class Borrow {
     private Integer borrowID;
 
     @ManyToOne
-    @JoinColumn(name = "borrowerID")
+    @JoinColumn(name = "borrowerID", referencedColumnName = "Id")
     private Borrower borrower;
 
     @ManyToOne
-    @JoinColumn(name = "bookID")
+    @JoinColumn(name = "bookID", referencedColumnName = "bookID")
     private Book book;
 
     private LocalDate borrowDate;

@@ -16,7 +16,9 @@ public class Borrower {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer borrowerID;
+    private Integer Id;
+
+    private String borrowerName;
     private String address;
     private String mobileNo;
     private String email;
