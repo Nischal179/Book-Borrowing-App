@@ -33,4 +33,14 @@ public class BorrowController {
     public Borrow recordBorrow(@RequestParam Integer borrowerId, @RequestParam Integer bookId) {
         return borrowService.recordBorrow(borrowerId, bookId);
     }
+
+    @PutMapping("/{id}")
+    public Borrow updateBorrow(@PathVariable Integer id, @RequestParam Integer borrowerId, @RequestParam Integer bookId) {
+        return borrowService.updateBorrow(id, borrowerId, bookId);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteBorrow(@PathVariable Integer id) {
+        borrowService.deleteBorrow(id);
+    }
 }

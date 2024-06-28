@@ -1,4 +1,5 @@
 package com.nischal.book_borrowing_app.service;
+
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.repository.BookRepository;
@@ -37,6 +38,18 @@ public class BorrowService {
         return borrowRepository.save(borrow);
     }
 
+    public Borrow updateBorrow(Integer id, Integer borrowerId, Integer bookId) {
+        Borrow borrow = borrowRepository.findById(id).orElseThrow();
+        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
+        borrow.setBook(bookRepository.findById(bookId).orElseThrow());
+        return borrowRepository.save(borrow);
+    }
+
+    public void deleteBorrow(Integer id) {
+        Borrow borrow = borrowRepository.findById(id).orElseThrow();
+        borrowRepository.delete(borrow);
+    }
+
     public List<Borrow> getAllBorrows() {
         return borrowRepository.findAll();
     }
@@ -49,3 +62,6 @@ public class BorrowService {
         return borrowRepository.findByBorrowerId(borrowerId);
     }
 }
+
+
+
