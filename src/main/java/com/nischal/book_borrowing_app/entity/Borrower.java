@@ -15,7 +15,7 @@ public class Borrower {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer Id;
 
     private String borrowerName;

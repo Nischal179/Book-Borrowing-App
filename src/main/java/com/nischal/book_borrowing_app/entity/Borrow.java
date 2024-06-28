@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class Borrow {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer borrowID;
 
     @ManyToOne
