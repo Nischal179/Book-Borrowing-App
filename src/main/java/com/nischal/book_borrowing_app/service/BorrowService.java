@@ -33,6 +33,10 @@ public class BorrowService {
         // Decrease the quantity of the borrowed book
         Book book = borrow.getBook();
         book.setQuantity(book.getQuantity() - 1);
+        if (book.getQuantity()==0)
+        {
+            book.setAvailableStatus(false);
+        }
         bookRepository.save(book);
 
         return borrowRepository.save(borrow);
