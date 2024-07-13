@@ -23,14 +23,27 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Integer id) {
+    public ResponseEntity<Book> getBookById(@PathVariable String id) {
 
-        Optional<Book> book = bookService.getBookById(id);
-        if (book.isPresent()){
-            return ResponseEntity.ok(book.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
+        int bookId;
+        Optional<Book> theBook;
+        try {
+            bookId = Integer.parseInt(id);
+            theBook = bookService.getBookById(bookId);
+            if (theBook.isEmpty()) {
+                throw new CustomException("Not found");
+            }
+
+            return ResponseEntity.ok(theBook.get());
+
+        } catch (NumberFormatException e) {
+
+            throw new IllegalArgumentException("Bad Request: ID must be a number:  " + id);
+
+        } catch (CustomException e) {
+
+            throw new IllegalArgumentException("Not Found: Data for corresponding id: " + id);
+
         }
     }
 
@@ -41,25 +54,23 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
+    public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
         int bookId;
         Book updatedBook;
         try {
             bookId = Integer.parseInt(id);
             if (bookService.getBookById(bookId).isEmpty()) {
                 throw new CustomException("Not found");
-
             }
             updatedBook = bookService.updateBook(bookId, bookDetails);
-
+            return (ResponseEntity.ok(updatedBook));
         }catch (NumberFormatException e) {
             throw new IllegalArgumentException("Bad Request: ID must be a number:  "+id);
         }catch (CustomException e) {
-            throw new RuntimeException("Not Found: No data found for corresponding id: "+id);
+            throw new IllegalArgumentException("Not Found: Data for corresponding id: "+id);
         } catch (Exception e) {
             throw new IllegalArgumentException("Bad Request");
         }
-        return (updatedBook);
     }
 
     @DeleteMapping("/{id}")
