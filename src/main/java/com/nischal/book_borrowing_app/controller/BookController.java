@@ -1,4 +1,5 @@
 package com.nischal.book_borrowing_app.controller;
+import com.nischal.book_borrowing_app.customError.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,13 +40,22 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Integer id, @RequestBody Book bookDetails) {
+    public Book updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
+        int bookId;
+        Book updatedBook;
         try {
-            Book updatedBook = bookService.updateBook(id, bookDetails);
-            return ResponseEntity.ok(updatedBook);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            bookId = Integer.parseInt(id);
+            if(bookService.getBookById(bookId).isPresent()) {
+                updatedBook = bookService.updateBook(bookId, bookDetails);
+            }
+            else {
+                throw new CustomException("Not found");
+            }
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Bad Request");
         }
+        return (updatedBook);
     }
 
     @DeleteMapping("/{id}")
@@ -54,7 +64,7 @@ public class BookController {
             bookService.deleteBook(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            throw new CustomException("not found");
         }
 
     }
