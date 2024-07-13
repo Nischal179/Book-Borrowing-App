@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.service.BookService;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,14 +46,17 @@ public class BookController {
         Book updatedBook;
         try {
             bookId = Integer.parseInt(id);
-            if(bookService.getBookById(bookId).isPresent()) {
-                updatedBook = bookService.updateBook(bookId, bookDetails);
-            }
-            else {
+            if (bookService.getBookById(bookId).isEmpty()) {
                 throw new CustomException("Not found");
-            }
 
-        } catch (NumberFormatException e) {
+            }
+            updatedBook = bookService.updateBook(bookId, bookDetails);
+
+        }catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Bad Request: ID must be a number:  "+id);
+        }catch (CustomException e) {
+            throw new RuntimeException("Not Found: No data found for corresponding id: "+id);
+        } catch (Exception e) {
             throw new IllegalArgumentException("Bad Request");
         }
         return (updatedBook);

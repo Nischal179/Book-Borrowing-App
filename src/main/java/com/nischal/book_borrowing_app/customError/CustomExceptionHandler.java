@@ -25,11 +25,11 @@ public class CustomExceptionHandler {
 
     public HttpStatus getStatusCode(Exception e) {
 
-        if(e.getMessage().equalsIgnoreCase("bad request")) {
+        if(e.getMessage().toLowerCase().contains("bad request")) {
 
             return HttpStatus.BAD_REQUEST;
 
-        } else if (e.getMessage().equalsIgnoreCase("not found")) {
+        } else if (e.getMessage().toLowerCase().contains("not found")) {
 
             return HttpStatus.NOT_FOUND;
 
