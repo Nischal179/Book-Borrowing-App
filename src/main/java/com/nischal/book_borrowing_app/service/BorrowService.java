@@ -5,6 +5,7 @@ import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.repository.BookRepository;
 import com.nischal.book_borrowing_app.repository.BorrowRepository;
 import com.nischal.book_borrowing_app.repository.BorrowerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +25,25 @@ public class BorrowService {
     @Autowired
     private BorrowerRepository borrowerRepository;
 
+    @Transactional
     public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow();
+
+        // Check if the book can be borrowed
+        if (book.getQuantity() <= 0 || !book.getAvailableStatus()) {
+            throw new RuntimeException("Book is not available for borrowing");
+        }
         Borrow borrow = new Borrow();
         borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
-        borrow.setBook(bookRepository.findById(bookId).orElseThrow());
+        borrow.setBook(book);
         borrow.setBorrowDate(LocalDate.now());
 
         // Decrease the quantity of the borrowed book
-        Book book = borrow.getBook();
         book.setQuantity(book.getQuantity() - 1);
+        if (book.getQuantity()==0)
+        {
+            book.setAvailableStatus(false);
+        }
         bookRepository.save(book);
 
         return borrowRepository.save(borrow);
