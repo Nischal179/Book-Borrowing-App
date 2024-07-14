@@ -49,14 +49,12 @@ public class BookController {
         }
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity <Book> addBook(@Valid @RequestBody Book book) {
         Book createdBook = bookService.addBook(book);
         return ResponseEntity.ok(createdBook);
     }
 
-    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
         int bookId;
@@ -77,7 +75,6 @@ public class BookController {
         }
     }
 
-    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
         int bookId;

@@ -3,6 +3,7 @@ package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.service.BorrowService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,19 +31,16 @@ public class BorrowController {
         return borrowService.getBorrowsByBorrowerId(borrowerId);
     }
 
-    @Transactional
     @PostMapping
-    public Borrow recordBorrow(@RequestParam Integer borrowerId, @RequestParam Integer bookId) {
+    public Borrow recordBorrow(@Valid @RequestParam Integer borrowerId, @RequestParam Integer bookId) {
         return borrowService.recordBorrow(borrowerId, bookId);
     }
 
-    @Transactional
     @PutMapping("/{id}")
     public Borrow updateBorrow(@PathVariable Integer id, @RequestParam Integer borrowerId, @RequestParam Integer bookId) {
         return borrowService.updateBorrow(id, borrowerId, bookId);
     }
 
-    @Transactional
     @DeleteMapping("/{id}")
     public void deleteBorrow(@PathVariable Integer id) {
         borrowService.deleteBorrow(id);

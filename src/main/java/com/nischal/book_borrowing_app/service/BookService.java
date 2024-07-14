@@ -5,6 +5,7 @@ import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.repository.BookRepository;
 import com.nischal.book_borrowing_app.repository.BorrowRepository;
 import com.nischal.book_borrowing_app.repository.BorrowerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
+    @Transactional
     public Book addBook(Book book) {
         if (book.getQuantity() > 0 && !book.getAvailableStatus()) {
             throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
@@ -39,6 +41,7 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    @Transactional
     public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
         Borrow borrow = new Borrow();
         borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
@@ -64,6 +67,7 @@ public class BookService {
         return borrowRepository.save(borrow);
     }
 
+    @Transactional
     public Book updateBook(Integer id, Book bookDetails) {
         Book book = bookRepository.findById(id).orElseThrow();
         book.setBookName(bookDetails.getBookName());
@@ -74,6 +78,7 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    @Transactional
     public void deleteBook(Integer id) {
         bookRepository.deleteById(id);
     }

@@ -32,14 +32,12 @@ public class BorrowerController {
         }
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<Borrower> addBorrower(@RequestBody Borrower borrower) {
         Borrower createdBorrower = borrowerService.addBorrower(borrower);
         return ResponseEntity.ok(createdBorrower);
     }
 
-    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Borrower> updateBorrower(@PathVariable Integer id, @RequestBody Borrower borrowerDetails) {
         try {
@@ -50,7 +48,6 @@ public class BorrowerController {
         }
     }
 
-    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable Integer id) {
         try {

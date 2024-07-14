@@ -49,6 +49,7 @@ public class BorrowService {
         return borrowRepository.save(borrow);
     }
 
+    @Transactional
     public Borrow updateBorrow(Integer id, Integer borrowerId, Integer bookId) {
         Borrow borrow = borrowRepository.findById(id).orElseThrow();
         borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
@@ -56,6 +57,7 @@ public class BorrowService {
         return borrowRepository.save(borrow);
     }
 
+    @Transactional
     public void deleteBorrow(Integer id) {
         Borrow borrow = borrowRepository.findById(id).orElseThrow();
         borrowRepository.delete(borrow);

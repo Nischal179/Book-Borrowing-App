@@ -37,6 +37,7 @@ public class BorrowerService {
         return borrowerRepository.save(borrower);
     }
 
+    @Transactional
     public void deleteBorrower(Integer id) {
         borrowerRepository.deleteById(id);
     }
