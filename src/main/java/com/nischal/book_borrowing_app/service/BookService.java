@@ -33,6 +33,9 @@ public class BookService {
     }
 
     public Book addBook(Book book) {
+        if (book.getQuantity() > 0 && !book.getAvailableStatus()) {
+            throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
+        }
         return bookRepository.save(book);
     }
 

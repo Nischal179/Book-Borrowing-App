@@ -1,10 +1,14 @@
 package com.nischal.book_borrowing_app.customError;
 
+import java.util.Map;
+
 public class CustomErrorResponsePOJO {
 
     private int status;
     private String message;
     private long timeStamp;
+
+    private Map<String, String> errors; //For validation errors
 
     public CustomErrorResponsePOJO() {
 
@@ -38,5 +42,13 @@ public class CustomErrorResponsePOJO {
 
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public Map<String,String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(Map<String, String> errors) {
+        this.errors = errors;
     }
 }

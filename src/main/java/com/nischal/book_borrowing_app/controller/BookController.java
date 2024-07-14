@@ -1,5 +1,7 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +49,14 @@ public class BookController {
         }
     }
 
+    @Transactional
     @PostMapping
-    public ResponseEntity <Book> addBook(@RequestBody Book book) {
+    public ResponseEntity <Book> addBook(@Valid @RequestBody Book book) {
         Book createdBook = bookService.addBook(book);
         return ResponseEntity.ok(createdBook);
     }
 
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
         int bookId;
@@ -73,6 +77,7 @@ public class BookController {
         }
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Integer id) {
         try {
