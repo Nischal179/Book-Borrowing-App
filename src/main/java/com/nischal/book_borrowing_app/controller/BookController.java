@@ -79,12 +79,21 @@ public class BookController {
 
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
+        int bookId;
         try {
-            bookService.deleteBook(id);
+            bookId = Integer.parseInt(id);
+            if (bookService.getBookById(bookId).isEmpty()) {
+                throw new CustomException("Not found");
+            }
+            bookService.deleteBook(bookId);
             return ResponseEntity.noContent().build();
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Bad Request: ID must be a number:  "+id);
+        } catch (CustomException e) {
+            throw new IllegalArgumentException("Not Found: Data for corresponding id: "+id);
         } catch (Exception e) {
-            throw new CustomException("not found");
+            throw new IllegalArgumentException("Bad Request");
         }
 
     }
