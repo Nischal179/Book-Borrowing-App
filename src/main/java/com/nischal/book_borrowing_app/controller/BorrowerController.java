@@ -1,6 +1,7 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowerService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,14 @@ public class BorrowerController {
         }
     }
 
+    @Transactional
     @PostMapping
     public ResponseEntity<Borrower> addBorrower(@RequestBody Borrower borrower) {
         Borrower createdBorrower = borrowerService.addBorrower(borrower);
         return ResponseEntity.ok(createdBorrower);
     }
 
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Borrower> updateBorrower(@PathVariable Integer id, @RequestBody Borrower borrowerDetails) {
         try {
@@ -47,6 +50,7 @@ public class BorrowerController {
         }
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable Integer id) {
         try {
