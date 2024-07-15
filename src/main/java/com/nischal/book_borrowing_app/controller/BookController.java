@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
+import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,11 @@ public class BookController {
 
             return ResponseEntity.ok(theBook.get());
 
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
 
-            throw new IllegalArgumentException("Bad Request: ID must be a number:  " + id);
-
-        } catch (CustomException e) {
-
-            throw new IllegalArgumentException("Not Found: Data for corresponding id: " + id);
-
+            ExceptionUtil.handleException(id,e);
         }
+        return null;
     }
 
     @PostMapping
@@ -66,13 +63,10 @@ public class BookController {
             }
             updatedBook = bookService.updateBook(bookId, bookDetails);
             return (ResponseEntity.ok(updatedBook));
-        }catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Bad Request: ID must be a number:  "+id);
-        }catch (CustomException e) {
-            throw new IllegalArgumentException("Not Found: Data for corresponding id: "+id);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Bad Request");
+        }catch (Exception e) {
+            ExceptionUtil.handleException(id,e);
         }
+        return null;
     }
 
     @DeleteMapping("/{id}")
@@ -85,13 +79,9 @@ public class BookController {
             }
             bookService.deleteBook(bookId);
             return ResponseEntity.noContent().build();
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Bad Request: ID must be a number:  "+id);
-        } catch (CustomException e) {
-            throw new IllegalArgumentException("Not Found: Data for corresponding id: "+id);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Bad Request");
+            ExceptionUtil.handleException(id,e);
         }
-
+        return null;
     }
 }
