@@ -2,6 +2,7 @@ package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowerService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class BorrowerController {
     }
 
     @PostMapping
-    public ResponseEntity<Borrower> addBorrower(@RequestBody Borrower borrower) {
+    public ResponseEntity<Borrower> addBorrower(@Valid @RequestBody Borrower borrower) {
         Borrower createdBorrower = borrowerService.addBorrower(borrower);
         return ResponseEntity.ok(createdBorrower);
     }

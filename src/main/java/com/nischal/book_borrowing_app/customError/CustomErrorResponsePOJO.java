@@ -6,7 +6,7 @@ public class CustomErrorResponsePOJO {
 
     private int status;
     private String message;
-    private long timeStamp;
+    private String timeStamp;
 
     private Map<String, String> errors; //For validation errors
 
@@ -14,7 +14,7 @@ public class CustomErrorResponsePOJO {
 
     }
 
-    public CustomErrorResponsePOJO(int status, String message, long timeStamp) {
+    public CustomErrorResponsePOJO(int status, String message, String timeStamp) {
         this.status = status;
         this.message = message;
         this.timeStamp = timeStamp;
@@ -36,11 +36,11 @@ public class CustomErrorResponsePOJO {
         this.message = message;
     }
 
-    public long getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 
