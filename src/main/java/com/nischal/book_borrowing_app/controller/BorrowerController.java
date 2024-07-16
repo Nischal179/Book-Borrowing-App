@@ -48,13 +48,21 @@ public class BorrowerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Borrower> updateBorrower(@PathVariable Integer id, @RequestBody Borrower borrowerDetails) {
+    public ResponseEntity<Borrower> updateBorrower(@PathVariable String id, @RequestBody Borrower borrowerDetails) {
+        int borrowerId;
+        Borrower updatedBorrower;
         try {
-            Borrower updatedBorrower = borrowerService.updateBorrower(id, borrowerDetails);
+            borrowerId = Integer.parseInt(id);
+            if (borrowerService.getBorrowerById(borrowerId).isEmpty())
+            {
+                throw new CustomException("Not Found");
+            }
+            updatedBorrower = borrowerService.updateBorrower(borrowerId, borrowerDetails);
             return ResponseEntity.ok(updatedBorrower);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            ExceptionUtil.handleException(id,e);
         }
+        return null;
     }
 
     @DeleteMapping("/{id}")
