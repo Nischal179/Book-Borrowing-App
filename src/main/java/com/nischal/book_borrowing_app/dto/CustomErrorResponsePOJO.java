@@ -1,4 +1,4 @@
-package com.nischal.book_borrowing_app.customError;
+package com.nischal.book_borrowing_app.dto;
 
 import java.util.Map;
 

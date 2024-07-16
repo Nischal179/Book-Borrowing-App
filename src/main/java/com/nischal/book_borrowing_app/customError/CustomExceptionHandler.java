@@ -1,6 +1,7 @@
 package com.nischal.book_borrowing_app.customError;
 
 
+import com.nischal.book_borrowing_app.dto.CustomErrorResponsePOJO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
