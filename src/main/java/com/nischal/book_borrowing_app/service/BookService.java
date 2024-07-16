@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.service;
 
+import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.repository.BookRepository;
@@ -70,12 +71,15 @@ public class BookService {
     @Transactional
     public Book updateBook(Integer id, Book bookDetails) {
         Book book = bookRepository.findById(id).orElseThrow();
+        if (bookDetails.getQuantity() > 0 && !bookDetails.getAvailableStatus()) {
+            throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
+        }
         book.setBookName(bookDetails.getBookName());
         book.setAuthor(bookDetails.getAuthor());
         book.setPrice(bookDetails.getPrice());
         book.setQuantity(bookDetails.getQuantity());
         book.setAvailableStatus(bookDetails.getAvailableStatus());
-        return bookRepository.save(book);
+        return bookRepository.save(new Book());
     }
 
     @Transactional

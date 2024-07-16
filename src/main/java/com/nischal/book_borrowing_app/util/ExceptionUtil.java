@@ -7,9 +7,9 @@ public class ExceptionUtil {
     public static void handleException(String id, Exception e)
     {
         if (e instanceof NumberFormatException) {
-            throw new IllegalArgumentException("Bad Request: ID must be a number: " + id);
+            throw new NumberFormatException("Bad Request: ID must be a number: " + id);
         } else if (e instanceof CustomException) {
-            throw new IllegalArgumentException("Not Found: Data for corresponding id: " + id);
+            throw new CustomException("Not Found: Data for corresponding id: " + id);
         }
         else {
             throw new IllegalArgumentException("Bad Request");

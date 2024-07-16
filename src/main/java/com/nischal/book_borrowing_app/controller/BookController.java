@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
+import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private ControllerUtil controllerUtil;
+
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
@@ -25,22 +29,14 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable String id) {
-
-        int bookId;
-        Optional<Book> theBook;
         try {
-            bookId = Integer.parseInt(id);
-            theBook = bookService.getBookById(bookId);
-            if (theBook.isEmpty()) {
-                throw new CustomException("Not found");
-            }
-
-            return ResponseEntity.ok(theBook.get());
+            Book book = controllerUtil.validateAndGetBook(id);
+            return ResponseEntity.ok(book);
 
         } catch (Exception e) {
-
             ExceptionUtil.handleException(id,e);
         }
+
         return null;
     }
 
@@ -55,11 +51,8 @@ public class BookController {
         int bookId;
         Book updatedBook;
         try {
-            bookId = Integer.parseInt(id);
-            if (bookService.getBookById(bookId).isEmpty()) {
-                throw new CustomException("Not found");
-            }
-            updatedBook = bookService.updateBook(bookId, bookDetails);
+            Book book = controllerUtil.validateAndGetBook(id);
+            updatedBook = bookService.updateBook(book.getBookId(), bookDetails);
             return (ResponseEntity.ok(updatedBook));
         }catch (Exception e) {
             ExceptionUtil.handleException(id,e);
@@ -69,13 +62,10 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
-        int bookId;
+
         try {
-            bookId = Integer.parseInt(id);
-            if (bookService.getBookById(bookId).isEmpty()) {
-                throw new CustomException("Not found");
-            }
-            bookService.deleteBook(bookId);
+            Book book = controllerUtil.validateAndGetBook(id);
+            bookService.deleteBook(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
