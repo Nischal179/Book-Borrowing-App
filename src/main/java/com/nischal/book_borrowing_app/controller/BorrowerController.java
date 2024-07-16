@@ -2,6 +2,7 @@ package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowerService;
+import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,6 +21,9 @@ public class BorrowerController {
     @Autowired
     private BorrowerService borrowerService;
 
+    @Autowired
+    private ControllerUtil controllerUtil;
+
     @GetMapping
     public List<Borrower> getAllBorrowers() {
         return borrowerService.getAllBorrowers();
@@ -27,15 +31,9 @@ public class BorrowerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Borrower> getBorrowerById(@PathVariable String id) {
-        int borrowerId;
-        Optional<Borrower> borrower;
         try {
-            borrowerId = Integer.parseInt(id);
-            borrower = borrowerService.getBorrowerById(borrowerId);
-            if (borrower.isEmpty()) {
-                throw new NoSuchElementException("Not found");
-            }
-            return ResponseEntity.ok(borrower.get());
+            Borrower borrower = controllerUtil.validateAndGetBorrower(id);
+            return ResponseEntity.ok(borrower);
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
@@ -50,16 +48,13 @@ public class BorrowerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Borrower> updateBorrower(@PathVariable String id, @RequestBody Borrower borrowerDetails) {
-        int borrowerId;
         Borrower updatedBorrower;
         try {
-            borrowerId = Integer.parseInt(id);
-            if (borrowerService.getBorrowerById(borrowerId).isEmpty())
-            {
-                throw new NoSuchElementException("Not Found");
-            }
-            updatedBorrower = borrowerService.updateBorrower(borrowerId, borrowerDetails);
+
+            Borrower borrower = controllerUtil.validateAndGetBorrower(id);
+            updatedBorrower = borrowerService.updateBorrower(borrower.getId(), borrowerDetails);
             return ResponseEntity.ok(updatedBorrower);
+
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
@@ -68,14 +63,9 @@ public class BorrowerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable String id) {
-        int borrowerId;
         try {
-            borrowerId = Integer.parseInt(id);
-            if (borrowerService.getBorrowerById(borrowerId).isEmpty())
-            {
-                throw new NoSuchElementException("Not Found");
-            }
-            borrowerService.deleteBorrower(borrowerId);
+            Borrower borrower = controllerUtil.validateAndGetBorrower(id);
+            borrowerService.deleteBorrower(borrower.getId());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);

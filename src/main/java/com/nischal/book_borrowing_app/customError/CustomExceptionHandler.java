@@ -30,12 +30,14 @@ public class CustomExceptionHandler {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;
             Map<String, String> errors = new HashMap<>();
             ex.getBindingResult().getAllErrors().forEach((error) -> {
+                errors.put("error","Bad Request");
                 String fieldName = ((FieldError) error).getField();
                 String errorMessage = error.getDefaultMessage();
-                errors.put("Error","Bad Request");
+
 //            errors.put("Status Code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
                 errors.put(fieldName, errorMessage);
             });
+
             errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             errorResponse.setMessage("Validation failed");
             errorResponse.setErrors(errors);
