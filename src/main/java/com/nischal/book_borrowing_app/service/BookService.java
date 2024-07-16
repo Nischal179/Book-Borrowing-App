@@ -50,7 +50,7 @@ public class BookService {
 
         // Check if the book is available
         if (book.getQuantity() <= 0) {
-            throw new RuntimeException("Book is not available for borrowing.");
+            throw new CustomException("Book is not available for borrowing.");
         }
 
         borrow.setBook(book);

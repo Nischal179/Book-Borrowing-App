@@ -19,7 +19,7 @@ public class CustomExceptionHandler {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @ExceptionHandler({Exception.class, MethodArgumentNotValidException.class})
-    public ResponseEntity<CustomErrorResponsePOJO> handleException (Exception e) {
+    public ResponseEntity<CustomErrorResponsePOJO> exceptionHandler (Exception e) {
 
         CustomErrorResponsePOJO errorResponse = new CustomErrorResponsePOJO();
         HttpStatus status;

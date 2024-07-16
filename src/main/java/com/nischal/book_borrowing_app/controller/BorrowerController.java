@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -32,7 +33,7 @@ public class BorrowerController {
             borrowerId = Integer.parseInt(id);
             borrower = borrowerService.getBorrowerById(borrowerId);
             if (borrower.isEmpty()) {
-                throw new CustomException("Not found");
+                throw new NoSuchElementException("Not found");
             }
             return ResponseEntity.ok(borrower.get());
         } catch (Exception e) {
@@ -55,7 +56,7 @@ public class BorrowerController {
             borrowerId = Integer.parseInt(id);
             if (borrowerService.getBorrowerById(borrowerId).isEmpty())
             {
-                throw new CustomException("Not Found");
+                throw new NoSuchElementException("Not Found");
             }
             updatedBorrower = borrowerService.updateBorrower(borrowerId, borrowerDetails);
             return ResponseEntity.ok(updatedBorrower);
@@ -72,7 +73,7 @@ public class BorrowerController {
             borrowerId = Integer.parseInt(id);
             if (borrowerService.getBorrowerById(borrowerId).isEmpty())
             {
-                throw new CustomException("Not Found");
+                throw new NoSuchElementException("Not Found");
             }
             borrowerService.deleteBorrower(borrowerId);
             return ResponseEntity.noContent().build();
