@@ -1,14 +1,12 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.service.BookService;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;

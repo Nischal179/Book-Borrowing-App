@@ -66,12 +66,19 @@ public class BorrowerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBorrower(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteBorrower(@PathVariable String id) {
+        int borrowerId;
         try {
-            borrowerService.deleteBorrower(id);
+            borrowerId = Integer.parseInt(id);
+            if (borrowerService.getBorrowerById(borrowerId).isEmpty())
+            {
+                throw new CustomException("Not Found");
+            }
+            borrowerService.deleteBorrower(borrowerId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            ExceptionUtil.handleException(id,e);
         }
+        return null;
     }
 }
