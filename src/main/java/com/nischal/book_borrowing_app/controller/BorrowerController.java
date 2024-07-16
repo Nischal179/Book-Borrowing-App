@@ -1,6 +1,8 @@
 package com.nischal.book_borrowing_app.controller;
+import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowerService;
+import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,20 @@ public class BorrowerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Borrower> getBorrowerById(@PathVariable Integer id) {
-        Optional<Borrower> borrower = borrowerService.getBorrowerById(id);
-        if(borrower.isPresent()) {
+    public ResponseEntity<Borrower> getBorrowerById(@PathVariable String id) {
+        int borrowerId;
+        Optional<Borrower> borrower;
+        try {
+            borrowerId = Integer.parseInt(id);
+            borrower = borrowerService.getBorrowerById(borrowerId);
+            if (borrower.isEmpty()) {
+                throw new CustomException("Not found");
+            }
             return ResponseEntity.ok(borrower.get());
+        } catch (Exception e) {
+            ExceptionUtil.handleException(id,e);
         }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+        return null;
     }
 
     @PostMapping
