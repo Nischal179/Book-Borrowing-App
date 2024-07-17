@@ -2,6 +2,7 @@ package com.nischal.book_borrowing_app.service;
 
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
+import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.repository.BookRepository;
 import com.nischal.book_borrowing_app.repository.BorrowRepository;
 import com.nischal.book_borrowing_app.repository.BorrowerRepository;
@@ -27,16 +28,25 @@ public class BorrowService {
 
     @Transactional
     public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow();
 
+        Book book = bookRepository.findById(bookId).orElseThrow();
+        Borrower borrower = borrowerRepository.findById(borrowerId).orElseThrow();
         // Check if the book can be borrowed
         if (book.getQuantity() <= 0 || !book.getAvailableStatus()) {
             throw new RuntimeException("Book is not available for borrowing");
         }
+        if(borrower.getBooksBorrowed()==0)
+        {
+            borrower.setBooksBorrowed(1);
+        } else {
+            borrower.setBooksBorrowed(borrower.getBooksBorrowed()+1);
+        }
         Borrow borrow = new Borrow();
-        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
+        borrow.setBorrower(borrower);
         borrow.setBook(book);
         borrow.setBorrowDate(LocalDate.now());
+        borrow.setReturnDate(LocalDate.now().plusDays(15));
+        borrow.setReturnStatus(false);
 
         // Decrease the quantity of the borrowed book
         book.setQuantity(book.getQuantity() - 1);

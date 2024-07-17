@@ -31,4 +31,5 @@ public class Borrower {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
+    private int booksBorrowed;
 }
