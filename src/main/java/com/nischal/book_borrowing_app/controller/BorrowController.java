@@ -1,7 +1,10 @@
 package com.nischal.book_borrowing_app.controller;
 
+import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
+import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowService;
+import com.nischal.book_borrowing_app.util.ControllerUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import java.util.Optional;
 public class BorrowController {
     @Autowired
     private BorrowService borrowService;
+
+    @Autowired
+    private ControllerUtil controllerUtil;
 
     @GetMapping
     public List<Borrow> getAllBorrows() {
@@ -32,8 +38,10 @@ public class BorrowController {
     }
 
     @PostMapping
-    public Borrow recordBorrow(@Valid @RequestParam Integer borrowerId, @RequestParam Integer bookId) {
-        return borrowService.recordBorrow(borrowerId, bookId);
+    public Borrow recordBorrow(@Valid @RequestParam String borrowerId, @RequestParam String bookId) {
+        Book book = controllerUtil.validateAndGetBook(bookId);
+        Borrower borrower = controllerUtil.validateAndGetBorrower(borrowerId);
+        return borrowService.recordBorrow(borrower.getId(), book.getBookId());
     }
 
     @PutMapping("/{id}")

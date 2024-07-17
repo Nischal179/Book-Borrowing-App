@@ -11,7 +11,7 @@ public class ExceptionUtil {
         if (e instanceof NumberFormatException) {
             throw new NumberFormatException("Bad Request: ID must be a number :- " + id);
         } else if (e instanceof NoSuchElementException) {
-            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+            throw new NoSuchElementException(e.getMessage());
         } else if (e instanceof CustomException) {
             throw new CustomException(e.getMessage());
         } else if (e instanceof IllegalArgumentException) {

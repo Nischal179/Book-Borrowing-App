@@ -2,6 +2,7 @@ package com.nischal.book_borrowing_app.util;
 
 import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.entity.Book;
+import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BookService;
 import com.nischal.book_borrowing_app.service.BorrowService;
@@ -34,7 +35,7 @@ public class ControllerUtil {
             theBook = bookService.getBookById(bookId);
 
             if (theBook.isEmpty()) {
-                throw new NoSuchElementException("Not found");
+                throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
             }
 
             return (theBook.get());
@@ -53,9 +54,25 @@ public class ControllerUtil {
             borrowerId = Integer.parseInt(id);
             borrower = borrowerService.getBorrowerById(borrowerId);
             if (borrower.isEmpty()) {
-                throw new NoSuchElementException("Not Found");
+                throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
             }
             return (borrower.get());
+        } catch (Exception e)
+        {
+            ExceptionUtil.handleException(id,e);
+        }
+        return null;
+    }
+
+    public Borrow validateAndGetBorrow(String id) {
+        int borrow_id;
+        Optional<Borrow> borrow;
+        try {
+            borrow_id = Integer.parseInt(id);
+            borrow = borrowService.getBorrowById(borrow_id);
+            if (borrow.isEmpty()) {
+                throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+            }
         } catch (Exception e)
         {
             ExceptionUtil.handleException(id,e);
