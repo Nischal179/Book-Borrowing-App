@@ -73,6 +73,7 @@ public class ControllerUtil {
             if (borrow.isEmpty()) {
                 throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
             }
+            return (borrow.get());
         } catch (Exception e)
         {
             ExceptionUtil.handleException(id,e);
