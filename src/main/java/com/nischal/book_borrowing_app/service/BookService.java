@@ -1,6 +1,8 @@
 package com.nischal.book_borrowing_app.service;
 
 import com.nischal.book_borrowing_app.customError.CustomException;
+import com.nischal.book_borrowing_app.dto.BookRequestDTO;
+import com.nischal.book_borrowing_app.dto.BookResponseDTO;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.repository.BookRepository;
@@ -87,5 +89,24 @@ public class BookService {
     @Transactional
     public void deleteBook(Integer id) {
         bookRepository.deleteById(id);
+    }
+
+    private Book convertToEntity(BookRequestDTO bookRequestDTO) {
+        Book book = new Book();
+        book.setBookName(bookRequestDTO.getBookName());
+        book.setAuthor(bookRequestDTO.getAuthor());
+        book.setPrice(bookRequestDTO.getPrice());
+        book.setQuantity(bookRequestDTO.getQuantity());
+        return book;
+    }
+
+    private BookResponseDTO convertToDto(Book book) {
+        BookResponseDTO bookResponseDTO = new BookResponseDTO();
+        bookResponseDTO.setBookName(book.getBookName());
+        bookResponseDTO.setAuthor(book.getAuthor());
+        bookResponseDTO.setQuantity(book.getQuantity());
+        bookResponseDTO.setPrice(book.getPrice());
+        bookResponseDTO.setAvailableStatus(book.getAvailableStatus());
+        return bookResponseDTO;
     }
 }
