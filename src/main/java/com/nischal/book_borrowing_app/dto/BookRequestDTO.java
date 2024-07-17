@@ -12,6 +12,6 @@ public class BookRequestDTO {
     private String bookName;
     private String author;
     private Double price;
-//    private boolean availableStatus;
+    private boolean availableStatus;
     private Integer quantity;
 }
