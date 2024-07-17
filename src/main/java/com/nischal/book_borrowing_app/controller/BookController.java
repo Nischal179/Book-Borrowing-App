@@ -48,11 +48,10 @@ public class BookController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
-        int bookId;
         Book updatedBook;
         try {
             Book book = controllerUtil.validateAndGetBook(id);
-            updatedBook = bookService.updateBook(book.getBookId(), bookDetails);
+            updatedBook = bookService.updateBook(Integer.parseInt(id), bookDetails);
             return (ResponseEntity.ok(updatedBook));
         }catch (Exception e) {
             ExceptionUtil.handleException(id,e);
