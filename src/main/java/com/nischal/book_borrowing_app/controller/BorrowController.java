@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.controller;
 
+import com.nischal.book_borrowing_app.dto.BookResponseDTO;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
@@ -46,8 +47,8 @@ public class BorrowController {
     @PostMapping
     public Borrow recordBorrow(@Valid @RequestParam String borrowerId, @RequestParam String bookId) {
         Borrower borrower = controllerUtil.validateAndGetBorrower(borrowerId);
-        Book book = controllerUtil.validateAndGetBook(bookId);
-        return borrowService.recordBorrow(borrower.getId(), book.getBookId());
+        BookResponseDTO bookResponseDTO = controllerUtil.validateAndGetBook(bookId);
+        return borrowService.recordBorrow(borrower.getId(), Integer.parseInt(bookId));
     }
 
     @PutMapping("/{id}")

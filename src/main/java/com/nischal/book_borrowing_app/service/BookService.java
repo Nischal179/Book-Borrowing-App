@@ -43,10 +43,17 @@ public class BookService {
     @Transactional
     public BookResponseDTO addBook(BookRequestDTO bookRequestDTO) {
         Book book = convertToEntity(bookRequestDTO);
-        if (book.getQuantity() > 0 && !book.getAvailableStatus()) {
-            throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
-        } else if (book.getQuantity()==0 && book.getAvailableStatus()) {
-            throw new IllegalArgumentException("Bad request: Available status should be false if quantity is zero");
+//        if (book.getQuantity() > 0 && !book.getAvailableStatus()) {
+//            throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
+//        } else if (book.getQuantity()==0 && book.getAvailableStatus()) {
+//            throw new IllegalArgumentException("Bad request: Available status should be false if quantity is zero");
+//        }
+        if (book.getQuantity()==0)
+        {
+            book.setAvailableStatus(false);
+        }
+        else if (book.getQuantity()>0) {
+            book.setAvailableStatus(true);
         }
         return convertToDto(bookRepository.save(book));
     }
@@ -80,8 +87,11 @@ public class BookService {
     @Transactional
     public BookResponseDTO updateBook(Integer id, BookRequestDTO bookRequestDTO) {
         Book book = bookRepository.findById(id).orElseThrow();
-        if (bookRequestDTO.getQuantity() > 0 && !bookRequestDTO.isAvailableStatus()) {
-            throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
+
+        if (bookRequestDTO.getQuantity() == 0) {
+            book.setAvailableStatus(false);
+        } else if (bookRequestDTO.getQuantity()>0) {
+            book.setAvailableStatus(true);
         }
         book.setBookName(bookRequestDTO.getBookName());
         book.setAuthor(bookRequestDTO.getAuthor());

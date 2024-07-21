@@ -49,11 +49,11 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable String id, @RequestBody BookRequestDTO bookRequestDTO) {
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable String id, @Valid @RequestBody BookRequestDTO bookRequestDTO) {
         Book updatedBook;
         try {
-            BookResponseDTO bookResponseDTO = controllerUtil.validateAndGetBook(id);
-            bookResponseDTO = bookService.updateBook(Integer.parseInt(id), bookRequestDTO);
+            controllerUtil.validateAndGetBook(id);
+            BookResponseDTO bookResponseDTO = bookService.updateBook(Integer.parseInt(id), bookRequestDTO);
             return (ResponseEntity.ok(bookResponseDTO));
         }catch (Exception e) {
             ExceptionUtil.handleException(id,e);
