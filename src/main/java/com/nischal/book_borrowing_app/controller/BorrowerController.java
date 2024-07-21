@@ -1,5 +1,7 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
+import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
+import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowerService;
 import com.nischal.book_borrowing_app.util.ControllerUtil;
@@ -25,15 +27,15 @@ public class BorrowerController {
     private ControllerUtil controllerUtil;
 
     @GetMapping
-    public List<Borrower> getAllBorrowers() {
+    public List<BorrowerResponseDTO> getAllBorrowers() {
         return borrowerService.getAllBorrowers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Borrower> getBorrowerById(@PathVariable String id) {
+    public ResponseEntity<BorrowerResponseDTO> getBorrowerById(@PathVariable String id) {
         try {
-            Borrower borrower = controllerUtil.validateAndGetBorrower(id);
-            return ResponseEntity.ok(borrower);
+            BorrowerResponseDTO borrowerResponseDTO = controllerUtil.validateAndGetBorrower(id);
+            return ResponseEntity.ok(borrowerResponseDTO);
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
@@ -41,19 +43,18 @@ public class BorrowerController {
     }
 
     @PostMapping
-    public ResponseEntity<Borrower> addBorrower(@Valid @RequestBody Borrower borrower) {
-        Borrower createdBorrower = borrowerService.addBorrower(borrower);
+    public ResponseEntity<BorrowerResponseDTO> addBorrower(@Valid @RequestBody BorrowerRequestDTO borrowerRequestDTO) {
+        BorrowerResponseDTO createdBorrower = borrowerService.addBorrower(borrowerRequestDTO);
         return ResponseEntity.ok(createdBorrower);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Borrower> updateBorrower(@PathVariable String id, @RequestBody Borrower borrowerDetails) {
-        Borrower updatedBorrower;
+    public ResponseEntity<BorrowerResponseDTO> updateBorrower(@PathVariable String id, @RequestBody BorrowerRequestDTO borrowerRequestDTO) {
         try {
 
-            Borrower borrower = controllerUtil.validateAndGetBorrower(id);
-            updatedBorrower = borrowerService.updateBorrower(borrower.getId(), borrowerDetails);
-            return ResponseEntity.ok(updatedBorrower);
+            controllerUtil.validateAndGetBorrower(id);
+            BorrowerResponseDTO borrowerResponseDTO = borrowerService.updateBorrower(Integer.parseInt(id), borrowerRequestDTO);
+            return ResponseEntity.ok(borrowerResponseDTO);
 
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
@@ -64,8 +65,8 @@ public class BorrowerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable String id) {
         try {
-            Borrower borrower = controllerUtil.validateAndGetBorrower(id);
-            borrowerService.deleteBorrower(borrower.getId());
+            controllerUtil.validateAndGetBorrower(id);
+            borrowerService.deleteBorrower(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);

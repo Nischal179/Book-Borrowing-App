@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BorrowerService {
@@ -16,27 +17,33 @@ public class BorrowerService {
     @Autowired
     private BorrowerRepository borrowerRepository;
 
-    public List<Borrower> getAllBorrowers() {
-        return borrowerRepository.findAll();
+    public List<BorrowerResponseDTO> getAllBorrowers() {
+        return borrowerRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Borrower> getBorrowerById(Integer id) {
-        return borrowerRepository.findById(id);
+    public Optional<BorrowerResponseDTO> getBorrowerById(Integer id) {
+        return borrowerRepository.findById(id)
+                .map(this::convertToDto);
     }
 
     @Transactional
-    public Borrower addBorrower(Borrower borrower) {
-        return borrowerRepository.save(borrower);
+    public BorrowerResponseDTO addBorrower(BorrowerRequestDTO borrowerRequestDTO) {
+        Borrower borrower = convertToEntity(borrowerRequestDTO);
+        borrower.setBooksBorrowed(0);
+
+        return convertToDto(borrowerRepository.save(borrower));
     }
 
     @Transactional
-    public Borrower updateBorrower(Integer id, Borrower borrowerDetails) {
+    public BorrowerResponseDTO updateBorrower(Integer id, BorrowerRequestDTO borrowerRequestDTO) {
         Borrower borrower = borrowerRepository.findById(id).orElseThrow();
-        borrower.setBorrowerName(borrowerDetails.getBorrowerName());
-        borrower.setAddress(borrowerDetails.getAddress());
-        borrower.setMobileNo(borrowerDetails.getMobileNo());
-        borrower.setEmail(borrowerDetails.getEmail());
-        return borrowerRepository.save(borrower);
+        borrower.setBorrowerName(borrowerRequestDTO.getBorrowerName());
+        borrower.setAddress(borrowerRequestDTO.getAddress());
+        borrower.setMobileNo(borrowerRequestDTO.getMobileNo());
+        borrower.setEmail(borrowerRequestDTO.getEmail());
+        return convertToDto(borrowerRepository.save(borrower));
     }
 
     @Transactional

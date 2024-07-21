@@ -2,6 +2,7 @@ package com.nischal.book_borrowing_app.util;
 
 import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.dto.BookResponseDTO;
+import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
@@ -47,17 +48,17 @@ public class ControllerUtil {
         return null;
     }
 
-    public Borrower validateAndGetBorrower(String id) {
+    public BorrowerResponseDTO validateAndGetBorrower(String id) {
         int borrowerId;
-        Optional<Borrower> borrower;
+        Optional<BorrowerResponseDTO> theBorrowerResponseDTO;
 
         try {
             borrowerId = Integer.parseInt(id);
-            borrower = borrowerService.getBorrowerById(borrowerId);
-            if (borrower.isEmpty()) {
+            theBorrowerResponseDTO = borrowerService.getBorrowerById(borrowerId);
+            if (theBorrowerResponseDTO.isEmpty()) {
                 throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
             }
-            return (borrower.get());
+            return (theBorrowerResponseDTO.get());
         } catch (Exception e)
         {
             ExceptionUtil.handleException(id,e);

@@ -45,9 +45,9 @@ public class BorrowController {
 
     @PostMapping
     public Borrow recordBorrow(@Valid @RequestParam String borrowerId, @RequestParam String bookId) {
-        Borrower borrower = controllerUtil.validateAndGetBorrower(borrowerId);
-        BookResponseDTO bookResponseDTO = controllerUtil.validateAndGetBook(bookId);
-        return borrowService.recordBorrow(borrower.getId(), Integer.parseInt(bookId));
+        controllerUtil.validateAndGetBorrower(borrowerId);
+        controllerUtil.validateAndGetBook(bookId);
+        return borrowService.recordBorrow(Integer.parseInt(borrowerId), Integer.parseInt(bookId));
     }
 
     @PutMapping("/{id}")
