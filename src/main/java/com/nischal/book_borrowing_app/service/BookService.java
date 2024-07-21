@@ -116,6 +116,7 @@ public class BookService {
 
     private BookResponseDTO convertToDto(Book book) {
         BookResponseDTO bookResponseDTO = new BookResponseDTO();
+        bookResponseDTO.setBookId(book.getBookId());
         bookResponseDTO.setBookName(book.getBookName());
         bookResponseDTO.setAuthor(book.getAuthor());
         bookResponseDTO.setQuantity(book.getQuantity());

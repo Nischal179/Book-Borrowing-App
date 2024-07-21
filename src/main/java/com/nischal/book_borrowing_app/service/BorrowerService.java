@@ -1,4 +1,6 @@
 package com.nischal.book_borrowing_app.service;
+import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
+import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.repository.BorrowerRepository;
 import jakarta.transaction.Transactional;
@@ -40,5 +42,23 @@ public class BorrowerService {
     @Transactional
     public void deleteBorrower(Integer id) {
         borrowerRepository.deleteById(id);
+    }
+
+    private Borrower convertToEntity(BorrowerRequestDTO borrowerRequestDTO) {
+        Borrower borrower = new Borrower();
+        borrower.setBorrowerName(borrowerRequestDTO.getBorrowerName());
+        borrower.setAddress(borrowerRequestDTO.getAddress());
+        borrower.setEmail(borrowerRequestDTO.getEmail());
+        borrower.setMobileNo(borrowerRequestDTO.getMobileNo());
+        return borrower;
+    }
+
+    private BorrowerResponseDTO convertToDto(Borrower borrower) {
+        BorrowerResponseDTO borrowerResponseDTO = new BorrowerResponseDTO();
+        borrowerResponseDTO.setBorrowerId(borrower.getId());
+        borrowerResponseDTO.setBorrowerName(borrower.getBorrowerName());
+        borrowerResponseDTO.setEmail(borrower.getEmail());
+        borrowerResponseDTO.setBooksBorrowed(borrower.getBooksBorrowed());
+        return borrowerResponseDTO;
     }
 }

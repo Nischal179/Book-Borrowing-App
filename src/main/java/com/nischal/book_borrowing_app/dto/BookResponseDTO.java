@@ -8,6 +8,12 @@ import lombok.Setter;
 public class BookResponseDTO {
 
     //For response in GET method
+
+
+    /*  You should not include bookId in your response
+    but for my ease during development I have included it  */
+    private int bookId;
+
     private String bookName;
     private String author;
     private Double price;
