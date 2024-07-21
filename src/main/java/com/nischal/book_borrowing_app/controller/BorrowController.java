@@ -1,7 +1,6 @@
 package com.nischal.book_borrowing_app.controller;
 
 import com.nischal.book_borrowing_app.dto.BookResponseDTO;
-import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowService;
