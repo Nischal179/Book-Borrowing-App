@@ -37,7 +37,7 @@ public class BorrowerService {
         try {
             if(existingBorrowerOpt.isPresent())
             {
-                throw new CustomException("Borrower associated with the provided exists");
+                throw new CustomException("Conflict: Borrower associated with the provided email already exists");
             }
             else {
                 borrower.setBooksBorrowed(0);
