@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BorrowService {
@@ -28,7 +29,7 @@ public class BorrowService {
     private BorrowerRepository borrowerRepository;
 
     @Transactional
-    public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
+    public BorrowResponseDTO recordBorrow(Integer borrowerId, Integer bookId) {
 
         Book book = bookRepository.findById(bookId).orElseThrow();
         Borrower borrower = borrowerRepository.findById(borrowerId).orElseThrow();
@@ -57,15 +58,15 @@ public class BorrowService {
         }
         bookRepository.save(book);
 
-        return borrowRepository.save(borrow);
+        return convertToDto(borrowRepository.save(borrow));
     }
 
     @Transactional
-    public Borrow updateBorrow(Integer id, Integer borrowerId, Integer bookId) {
+    public BorrowResponseDTO updateBorrow(Integer id, Integer borrowerId, Integer bookId) {
         Borrow borrow = borrowRepository.findById(id).orElseThrow();
         borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
         borrow.setBook(bookRepository.findById(bookId).orElseThrow());
-        return borrowRepository.save(borrow);
+        return convertToDto(borrowRepository.save(borrow));
     }
 
     @Transactional
@@ -74,16 +75,19 @@ public class BorrowService {
         borrowRepository.delete(borrow);
     }
 
-    public List<Borrow> getAllBorrows() {
-        return borrowRepository.findAll();
+    public List<BorrowResponseDTO> getAllBorrows() {
+        return borrowRepository.findAll().stream()
+                .map(this::convertToDto).collect(Collectors.toList());
     }
 
-    public Optional<Borrow> getBorrowById(Integer id) {
-        return borrowRepository.findById(id);
+    public Optional<BorrowResponseDTO> getBorrowById(Integer id) {
+        return borrowRepository.findById(id)
+                .map(this::convertToDto);
     }
 
-    public List<Borrow> getBorrowsByBorrowerId(Integer borrowerId) {
-        return borrowRepository.findByBorrowerId(borrowerId);
+    public List<BorrowResponseDTO> getBorrowsByBorrowerId(Integer borrowerId) {
+        return borrowRepository.findByBorrowerId(borrowerId)
+                .stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     private BorrowResponseDTO convertToDto(Borrow borrow) {

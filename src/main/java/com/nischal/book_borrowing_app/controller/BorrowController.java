@@ -1,6 +1,7 @@
 package com.nischal.book_borrowing_app.controller;
 
 import com.nischal.book_borrowing_app.dto.BookResponseDTO;
+import com.nischal.book_borrowing_app.dto.BorrowResponseDTO;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowService;
@@ -23,15 +24,15 @@ public class BorrowController {
     private ControllerUtil controllerUtil;
 
     @GetMapping
-    public List<Borrow> getAllBorrows() {
+    public List<BorrowResponseDTO> getAllBorrows() {
         return borrowService.getAllBorrows();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Borrow> getBorrowById(@PathVariable String id) {
+    public ResponseEntity<BorrowResponseDTO> getBorrowById(@PathVariable String id) {
         try {
-            Borrow borrow = controllerUtil.validateAndGetBorrow(id);
-            return (ResponseEntity.ok(borrow));
+            BorrowResponseDTO borrowResponseDTO = controllerUtil.validateAndGetBorrow(id);
+            return (ResponseEntity.ok(borrowResponseDTO));
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
@@ -39,19 +40,19 @@ public class BorrowController {
     }
 
     @GetMapping("/borrower/{borrowerId}")
-    public List<Borrow> getBorrowsByBorrowerId(@PathVariable Integer borrowerId) {
+    public List<BorrowResponseDTO> getBorrowsByBorrowerId(@PathVariable Integer borrowerId) {
         return borrowService.getBorrowsByBorrowerId(borrowerId);
     }
 
     @PostMapping
-    public Borrow recordBorrow(@Valid @RequestParam String borrowerId, @RequestParam String bookId) {
+    public BorrowResponseDTO recordBorrow(@Valid @RequestParam String borrowerId, @RequestParam String bookId) {
         controllerUtil.validateAndGetBorrower(borrowerId);
         controllerUtil.validateAndGetBook(bookId);
         return borrowService.recordBorrow(Integer.parseInt(borrowerId), Integer.parseInt(bookId));
     }
 
     @PutMapping("/{id}")
-    public Borrow updateBorrow(@PathVariable String id, @RequestParam String borrowerId, @RequestParam String bookId) {
+    public BorrowResponseDTO updateBorrow(@PathVariable String id, @RequestParam String borrowerId, @RequestParam String bookId) {
         controllerUtil.validateAndGetBorrow(id);
         controllerUtil.validateAndGetBorrower(borrowerId);
         controllerUtil.validateAndGetBook(bookId);

@@ -9,15 +9,13 @@ import java.time.LocalDate;
 @Setter
 public class BorrowResponseDTO {
 
-    private String bookName;
-    private String authorName;
+    private int borrowId;
     private String borrowerName;
     private String email;
+    private String bookName;
+    private String authorName;
     private double price;
-    private int borrowId;
-
     private LocalDate borrowDate;
-
     private LocalDate returnDate;
 
 }
