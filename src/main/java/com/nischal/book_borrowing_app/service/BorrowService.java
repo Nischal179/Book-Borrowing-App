@@ -47,7 +47,7 @@ public class BorrowService {
         borrow.setBorrower(borrower);
         borrow.setBook(book);
         borrow.setBorrowDate(LocalDate.now());
-        borrow.setReturnDate(LocalDate.now().plusDays(15));
+        borrow.setReturnDateExpected(LocalDate.now().plusDays(15));
         borrow.setReturnStatus(false);
 
         // Decrease the quantity of the borrowed book
@@ -99,7 +99,7 @@ public class BorrowService {
         borrowResponseDTO.setAuthorName(borrow.getBook().getAuthor());
         borrowResponseDTO.setPrice(borrow.getBook().getPrice());
         borrowResponseDTO.setBorrowDate(borrow.getBorrowDate());
-        borrowResponseDTO.setReturnDate(borrow.getReturnDate());
+        borrowResponseDTO.setReturnDate(borrow.getReturnDateExpected());
 
         return borrowResponseDTO;
     }
