@@ -1,5 +1,7 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.customError.CustomException;
+import com.nischal.book_borrowing_app.dto.BookRequestDTO;
+import com.nischal.book_borrowing_app.dto.BookResponseDTO;
 import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
@@ -23,14 +25,14 @@ public class BookController {
     private ControllerUtil controllerUtil;
 
     @GetMapping
-    public List<Book> getAllBooks() {
+    public List<BookResponseDTO> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable String id) {
+    public ResponseEntity<BookResponseDTO> getBookById(@PathVariable String id) {
         try {
-            Book book = controllerUtil.validateAndGetBook(id);
+            BookResponseDTO book = controllerUtil.validateAndGetBook(id);
             return ResponseEntity.ok(book);
 
         } catch (Exception e) {
@@ -41,19 +43,18 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity <Book> addBook(@Valid @RequestBody Book book) {
-        Book createdBook = bookService.addBook(book);
+    public ResponseEntity <BookResponseDTO> addBook(@Valid @RequestBody BookRequestDTO bookRequestDTO) {
+         BookResponseDTO createdBook = bookService.addBook(bookRequestDTO);
         return ResponseEntity.ok(createdBook);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book bookDetails) {
-        int bookId;
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable String id, @Valid @RequestBody BookRequestDTO bookRequestDTO) {
         Book updatedBook;
         try {
-            Book book = controllerUtil.validateAndGetBook(id);
-            updatedBook = bookService.updateBook(book.getBookId(), bookDetails);
-            return (ResponseEntity.ok(updatedBook));
+            controllerUtil.validateAndGetBook(id);
+            BookResponseDTO bookResponseDTO = bookService.updateBook(Integer.parseInt(id), bookRequestDTO);
+            return (ResponseEntity.ok(bookResponseDTO));
         }catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
@@ -64,7 +65,7 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
 
         try {
-            Book book = controllerUtil.validateAndGetBook(id);
+            controllerUtil.validateAndGetBook(id);
             bookService.deleteBook(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {

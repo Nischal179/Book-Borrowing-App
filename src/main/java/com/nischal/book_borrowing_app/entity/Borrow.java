@@ -3,6 +3,7 @@ package com.nischal.book_borrowing_app.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +28,7 @@ public class Borrow {
 
     private LocalDate borrowDate;
 
+    private LocalDate returnDate;
+
+    private boolean returnStatus;
 }
