@@ -49,7 +49,7 @@ public class BorrowerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BorrowerResponseDTO> updateBorrower(@PathVariable String id, @RequestBody BorrowerRequestDTO borrowerRequestDTO) {
+    public ResponseEntity<BorrowerResponseDTO> updateBorrower(@PathVariable String id, @Valid @RequestBody BorrowerRequestDTO borrowerRequestDTO) {
         try {
 
             controllerUtil.validateAndGetBorrower(id);

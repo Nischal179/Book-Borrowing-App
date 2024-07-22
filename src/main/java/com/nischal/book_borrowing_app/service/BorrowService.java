@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.service;
 
+import com.nischal.book_borrowing_app.dto.BorrowResponseDTO;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
@@ -83,6 +84,20 @@ public class BorrowService {
 
     public List<Borrow> getBorrowsByBorrowerId(Integer borrowerId) {
         return borrowRepository.findByBorrowerId(borrowerId);
+    }
+
+    private BorrowResponseDTO convertToDto(Borrow borrow) {
+        BorrowResponseDTO borrowResponseDTO = new BorrowResponseDTO();
+        borrowResponseDTO.setBorrowId(borrow.getBorrowID());
+        borrowResponseDTO.setBorrowerName(borrow.getBorrower().getBorrowerName());
+        borrowResponseDTO.setEmail(borrow.getBorrower().getEmail());
+        borrowResponseDTO.setBookName(borrow.getBook().getBookName());
+        borrowResponseDTO.setAuthorName(borrow.getBook().getAuthor());
+        borrowResponseDTO.setPrice(borrow.getBook().getPrice());
+        borrowResponseDTO.setBorrowDate(borrow.getBorrowDate());
+        borrowResponseDTO.setReturnDate(borrow.getReturnDate());
+
+        return borrowResponseDTO;
     }
 }
 
