@@ -102,6 +102,11 @@ public class BookService {
 
     @Transactional
     public void deleteBook(Integer id) {
+
+        List<Borrow> borrows = borrowRepository.findByBookId(id);
+        if (!borrows.isEmpty()) {
+            throw new CustomException("Conflict: Cannot delete book it is associated with borrow records.");
+        }
         bookRepository.deleteById(id);
     }
 
