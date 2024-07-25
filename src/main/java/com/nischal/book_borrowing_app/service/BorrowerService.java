@@ -1,8 +1,10 @@
 package com.nischal.book_borrowing_app.service;
+import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.repository.BorrowerRepository;
+import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +33,21 @@ public class BorrowerService {
     @Transactional
     public BorrowerResponseDTO addBorrower(BorrowerRequestDTO borrowerRequestDTO) {
         Borrower borrower = convertToEntity(borrowerRequestDTO);
-        borrower.setBooksBorrowed(0);
-
-        return convertToDto(borrowerRepository.save(borrower));
+        Optional<Borrower> existingBorrowerOpt = borrowerRepository.findByEmail(borrowerRequestDTO.getEmail());
+        try {
+            if(existingBorrowerOpt.isPresent())
+            {
+                throw new CustomException("Conflict: Borrower associated with the provided email already exists");
+            }
+            else {
+                borrower.setBooksBorrowed(0);
+                return convertToDto(borrowerRepository.save(borrower));
+            }
+        }
+        catch (Exception e){
+            ExceptionUtil.handleException(String.valueOf(existingBorrowerOpt.get().getId()),e);
+        }
+        return null;
     }
 
     @Transactional

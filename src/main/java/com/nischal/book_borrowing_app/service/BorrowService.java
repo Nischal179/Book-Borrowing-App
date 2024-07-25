@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.service;
 
+import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.dto.BorrowResponseDTO;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.entity.Borrow;
@@ -35,7 +36,7 @@ public class BorrowService {
         Borrower borrower = borrowerRepository.findById(borrowerId).orElseThrow();
         // Check if the book can be borrowed
         if (book.getQuantity() <= 0 || !book.getAvailableStatus()) {
-            throw new RuntimeException("Book is not available for borrowing");
+            throw new CustomException("Conflict: Book is not available for borrowing");
         }
         if(borrower.getBooksBorrowed()==0)
         {
@@ -47,7 +48,7 @@ public class BorrowService {
         borrow.setBorrower(borrower);
         borrow.setBook(book);
         borrow.setBorrowDate(LocalDate.now());
-        borrow.setReturnDate(LocalDate.now().plusDays(15));
+        borrow.setReturnDateExpected(LocalDate.now().plusDays(15));
         borrow.setReturnStatus(false);
 
         // Decrease the quantity of the borrowed book
@@ -72,7 +73,13 @@ public class BorrowService {
     @Transactional
     public void deleteBorrow(Integer id) {
         Borrow borrow = borrowRepository.findById(id).orElseThrow();
-        borrowRepository.delete(borrow);
+        if (borrow.isReturnStatus() && borrow.getLateReturnFee()==0)
+        {
+            borrowRepository.delete(borrow);
+        }
+        else {
+            throw new CustomException("Conflict: Borrower has not returned the borrowed book or has pending late return fee");
+        }
     }
 
     public List<BorrowResponseDTO> getAllBorrows() {
@@ -99,7 +106,7 @@ public class BorrowService {
         borrowResponseDTO.setAuthorName(borrow.getBook().getAuthor());
         borrowResponseDTO.setPrice(borrow.getBook().getPrice());
         borrowResponseDTO.setBorrowDate(borrow.getBorrowDate());
-        borrowResponseDTO.setReturnDate(borrow.getReturnDate());
+        borrowResponseDTO.setReturnDate(borrow.getReturnDateExpected());
 
         return borrowResponseDTO;
     }

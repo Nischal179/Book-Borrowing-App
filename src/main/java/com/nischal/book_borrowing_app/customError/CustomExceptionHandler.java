@@ -66,6 +66,9 @@ public class CustomExceptionHandler {
 
             return HttpStatus.NOT_FOUND;
 
+        } else if (e.getMessage().toLowerCase().contains("conflict")) {
+
+            return HttpStatus.CONFLICT;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
     }

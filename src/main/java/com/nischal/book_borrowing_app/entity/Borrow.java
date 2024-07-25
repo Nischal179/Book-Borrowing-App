@@ -16,6 +16,7 @@ public class Borrow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "borrow_seq_generator", sequenceName = "borrow_seq", allocationSize = 1)
     private Integer borrowID;
 
     @ManyToOne
@@ -28,7 +29,9 @@ public class Borrow {
 
     private LocalDate borrowDate;
 
-    private LocalDate returnDate;
+    private LocalDate returnDateExpected;
 
+    private LocalDate returnDateActual;
+    private double lateReturnFee;
     private boolean returnStatus;
 }
