@@ -62,11 +62,44 @@ public class BorrowService {
         return convertToDto(borrowRepository.save(borrow));
     }
 
+//    @Transactional
+//    public BorrowResponseDTO updateBorrow(Integer id, Integer borrowerId, Integer bookId) {
+//        Borrow borrow = borrowRepository.findById(id).orElseThrow();
+//        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
+//        borrow.setBook(bookRepository.findById(bookId).orElseThrow());
+//        return convertToDto(borrowRepository.save(borrow));
+//    }
+
+
+    // TODO: Return date cannot be more than today's date
+    // TODO: Check if Late Return Fee is paid
     @Transactional
-    public BorrowResponseDTO updateBorrow(Integer id, Integer borrowerId, Integer bookId) {
+    public BorrowResponseDTO updateBorrow(Integer id, LocalDate returnDateActual) {
         Borrow borrow = borrowRepository.findById(id).orElseThrow();
-        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
-        borrow.setBook(bookRepository.findById(bookId).orElseThrow());
+        Borrower borrower;
+        borrow.setBorrower(borrow.getBorrower());
+        borrow.setBook(borrow.getBook());
+        if (returnDateActual.isBefore(borrow.getBorrowDate())) {
+            throw new CustomException("Bad Request: Return date cannot be before borrow date");
+        }
+        else if (returnDateActual.isBefore(borrow.getReturnDateExpected()) || returnDateActual.isEqual(borrow.getReturnDateExpected()) || returnDateActual.isEqual(borrow.getBorrowDate())) {
+            borrower = borrow.getBorrower();
+
+            borrow.setReturnDateActual(returnDateActual);
+            borrower.setBooksBorrowed(borrower.getBooksBorrowed()-1);
+            borrow.setReturnStatus(true);
+        }
+        else {
+//          else if (returnDateActual.isAfter(borrow.getReturnDateExpected())) {
+            int lateReturnDays = returnDateActual.compareTo(borrow.getReturnDateExpected());
+            borrower = borrow.getBorrower();
+
+            borrow.setLateReturnFee(lateReturnDays);
+            borrow.setReturnDateActual(returnDateActual);
+            borrower.setBooksBorrowed(borrower.getBooksBorrowed()-1);
+            borrow.setReturnStatus(true);
+        }
+
         return convertToDto(borrowRepository.save(borrow));
     }
 
@@ -106,8 +139,9 @@ public class BorrowService {
         borrowResponseDTO.setAuthorName(borrow.getBook().getAuthor());
         borrowResponseDTO.setPrice(borrow.getBook().getPrice());
         borrowResponseDTO.setBorrowDate(borrow.getBorrowDate());
-        borrowResponseDTO.setReturnDate(borrow.getReturnDateExpected());
-
+        borrowResponseDTO.setExpectedReturnDate(borrow.getReturnDateExpected());
+        borrowResponseDTO.setActualReturnDate(borrow.getReturnDateActual());
+        borrowResponseDTO.setReturnStatus(borrow.isReturnStatus());
         return borrowResponseDTO;
     }
 }

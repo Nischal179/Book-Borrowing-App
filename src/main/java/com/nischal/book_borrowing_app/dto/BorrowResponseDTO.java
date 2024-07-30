@@ -16,6 +16,8 @@ public class BorrowResponseDTO {
     private String authorName;
     private double price;
     private LocalDate borrowDate;
-    private LocalDate returnDate;
+    private LocalDate expectedReturnDate;
+    private LocalDate actualReturnDate;
+    private boolean returnStatus;
 
 }
