@@ -2,7 +2,9 @@ package com.nischal.book_borrowing_app.service;
 import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
+import com.nischal.book_borrowing_app.entity.Borrow;
 import com.nischal.book_borrowing_app.entity.Borrower;
+import com.nischal.book_borrowing_app.repository.BorrowRepository;
 import com.nischal.book_borrowing_app.repository.BorrowerRepository;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.transaction.Transactional;
@@ -18,6 +20,9 @@ public class BorrowerService {
 
     @Autowired
     private BorrowerRepository borrowerRepository;
+
+    @Autowired
+    private BorrowRepository borrowRepository;
 
     public List<BorrowerResponseDTO> getAllBorrowers() {
         return borrowerRepository.findAll().stream()
@@ -62,6 +67,16 @@ public class BorrowerService {
 
     @Transactional
     public void deleteBorrower(Integer id) {
+        if (!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()) {
+            throw new CustomException("Conflict: Cannot delete borrower associated with borrow record");
+        }
+        else if (!borrowRepository.findByBorrowerIdAndIsReturnedTrue(id).isEmpty()) {
+            List<Borrow> borrows = borrowRepository.findByBorrowerIdAndIsReturnedTrue(id);
+            for (Borrow borrow : borrows) {
+                Integer borrowId = borrow.getBorrowID();
+                borrowRepository.deleteById(borrowId);
+            }
+        }
         borrowerRepository.deleteById(id);
     }
 

@@ -17,4 +17,10 @@ public interface BorrowRepository extends JpaRepository<Borrow,Integer> {
 
     @Query("SELECT b FROM Borrow b WHERE b.book.id = :bookId AND b.returnStatus = true")
     List<Borrow> findByBookIdAndIsReturnedTrue(Integer bookId);
+
+    @Query("SELECT b FROM Borrow b WHERE b.borrower.id =:borrowerId AND b.returnStatus = false")
+    List<Borrow> findByBorrowerIdAndIsReturnedFalse(Integer borrowerId);
+
+    @Query("SELECT b FROM Borrow b WHERE b.borrower.id = :borrowerId AND b.returnStatus = true")
+    List<Borrow> findByBorrowerIdAndIsReturnedTrue(Integer borrowerId);
 }
