@@ -79,7 +79,10 @@ public class BorrowService {
         Borrower borrower;
         borrow.setBorrower(borrow.getBorrower());
         borrow.setBook(borrow.getBook());
-        if (returnDateActual.isBefore(borrow.getBorrowDate())) {
+        if (borrow.getReturnDateActual() !=null && borrow.isReturnStatus()) {
+            throw new CustomException("Conflict: Book has already been returned");
+        }
+        else if (returnDateActual.isBefore(borrow.getBorrowDate())) {
             throw new CustomException("Bad Request: Return date cannot be before borrow date");
         }
         else if (returnDateActual.isBefore(borrow.getReturnDateExpected()) || returnDateActual.isEqual(borrow.getReturnDateExpected()) || returnDateActual.isEqual(borrow.getBorrowDate())) {
@@ -89,8 +92,7 @@ public class BorrowService {
             borrower.setBooksBorrowed(borrower.getBooksBorrowed()-1);
             borrow.setReturnStatus(true);
         }
-        else {
-//          else if (returnDateActual.isAfter(borrow.getReturnDateExpected())) {
+        else if (returnDateActual.isAfter(borrow.getReturnDateExpected())) {
             int lateReturnDays = returnDateActual.compareTo(borrow.getReturnDateExpected());
             borrower = borrow.getBorrower();
 
