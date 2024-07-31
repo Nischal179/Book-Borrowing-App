@@ -106,6 +106,12 @@ public class BookService {
         List<Borrow> borrows = borrowRepository.findByBookId(id);
         if (!borrows.isEmpty()) {
             throw new CustomException("Conflict: Cannot delete book it is associated with borrow records.");
+        } else if (!borrowRepository.findByBookIdAndIsReturnedTrue(id).isEmpty()) {
+            borrows = borrowRepository.findByBookIdAndIsReturnedTrue(id);
+            for(Borrow borrow : borrows) {
+                Integer borrowId = borrow.getBorrowID();
+                borrowRepository.deleteById(borrowId);
+            }
         }
         bookRepository.deleteById(id);
     }
