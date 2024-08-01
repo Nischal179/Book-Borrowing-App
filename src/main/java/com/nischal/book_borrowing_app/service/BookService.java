@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,8 +37,13 @@ public class BookService {
     }
 
     public Optional<BookResponseDTO> getBookById(Integer id) {
-        return bookRepository.findById(id)
-                .map(this::convertToDto);
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        }
+        else {
+            return book.map(this::convertToDto);
+        }
     }
 
     @Transactional

@@ -45,7 +45,6 @@ public class BorrowController {
     @GetMapping("/borrower/{borrowerId}")
     public List<BorrowResponseDTO> getBorrowsByBorrowerId(@PathVariable String borrowerId) {
         try {
-            controllerUtil.validateAndGetBorrower(borrowerId);
             return borrowService.getBorrowsByBorrowerId(Integer.parseInt(borrowerId));
         } catch (Exception e) {
             ExceptionUtil.handleException(borrowerId,e);
@@ -83,13 +82,11 @@ public class BorrowController {
 
     @DeleteMapping("/{id}")
     public void deleteBorrow(@PathVariable String id) {
-//        try {
-//            controllerUtil.validateAndGetBorrow(id);
-//            borrowService.deleteBorrow(Integer.parseInt(id));
-//        } catch (Exception e) {
-//            ExceptionUtil.handleException(id,e);
-//        }
-        controllerUtil.validateAndGetBorrow(id);
-        borrowService.deleteBorrow(Integer.parseInt(id));
+        try {
+            controllerUtil.validateAndGetBorrow(id);
+            borrowService.deleteBorrow(Integer.parseInt(id));
+        } catch (Exception e) {
+            ExceptionUtil.handleException(id,e);
+        }
     }
 }
