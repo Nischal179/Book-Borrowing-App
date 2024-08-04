@@ -49,11 +49,6 @@ public class BookService {
     @Transactional
     public BookResponseDTO addBook(BookRequestDTO bookRequestDTO) {
         Book book = convertToEntity(bookRequestDTO);
-//        if (book.getQuantity() > 0 && !book.getAvailableStatus()) {
-//            throw new IllegalArgumentException("Bad request: Available status should be true if quantity is greater than 0");
-//        } else if (book.getQuantity()==0 && book.getAvailableStatus()) {
-//            throw new IllegalArgumentException("Bad request: Available status should be false if quantity is zero");
-//        }
         if (book.getQuantity()==0)
         {
             book.setAvailableStatus(false);
@@ -64,59 +59,67 @@ public class BookService {
         return convertToDto(bookRepository.save(book));
     }
 
-    @Transactional
-    public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
-        Borrow borrow = new Borrow();
-        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
-        Book book = bookRepository.findById(bookId).orElseThrow();
-
-        // Check if the book is available
-        if (book.getQuantity() <= 0) {
-            throw new CustomException("Book is not available for borrowing.");
-        }
-
-        borrow.setBook(book);
-        borrow.setBorrowDate(LocalDate.now());
-
-        // Decrease the quantity of the borrowed book
-        book.setQuantity(book.getQuantity() - 1);
-
-        // Set availability to false if quantity is zero
-        if (book.getQuantity()-1 <= 0) {
-            book.setAvailableStatus(false);
-        }
-
-        bookRepository.save(book);
-        return borrowRepository.save(borrow);
-    }
+//    @Transactional
+//    public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
+//        Borrow borrow = new Borrow();
+//        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
+//        Book book = bookRepository.findById(bookId).orElseThrow();
+//
+//        // Check if the book is available
+//        if (book.getQuantity() <= 0) {
+//            throw new CustomException("Book is not available for borrowing.");
+//        }
+//
+//        borrow.setBook(book);
+//        borrow.setBorrowDate(LocalDate.now());
+//
+//        // Decrease the quantity of the borrowed book
+//        book.setQuantity(book.getQuantity() - 1);
+//
+//        // Set availability to false if quantity is zero
+//        if (book.getQuantity()-1 <= 0) {
+//            book.setAvailableStatus(false);
+//        }
+//
+//        bookRepository.save(book);
+//        return borrowRepository.save(borrow);
+//    }
 
     @Transactional
     public BookResponseDTO updateBook(Integer id, BookRequestDTO bookRequestDTO) {
-        Book book = bookRepository.findById(id).orElseThrow();
-
-        if (bookRequestDTO.getQuantity() == 0) {
-            book.setAvailableStatus(false);
-        } else if (bookRequestDTO.getQuantity()>0) {
-            book.setAvailableStatus(true);
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
         }
-        book.setBookName(bookRequestDTO.getBookName());
-        book.setAuthor(bookRequestDTO.getAuthor());
-        book.setPrice(bookRequestDTO.getPrice());
-        book.setQuantity(bookRequestDTO.getQuantity());
-        return convertToDto(bookRepository.save(book));
+        else {
+            Book existingbook = book.get();
+            if (bookRequestDTO.getQuantity() == 0) {
+                existingbook.setAvailableStatus(false);
+            } else if (bookRequestDTO.getQuantity()>0) {
+                existingbook.setAvailableStatus(true);
+            }
+            existingbook.setBookName(bookRequestDTO.getBookName());
+            existingbook.setAuthor(bookRequestDTO.getAuthor());
+            existingbook.setPrice(bookRequestDTO.getPrice());
+            existingbook.setQuantity(bookRequestDTO.getQuantity());
+            return convertToDto(bookRepository.save(existingbook));
+        }
     }
 
     @Transactional
     public void deleteBook(Integer id) {
 
         List<Borrow> borrows = borrowRepository.findByBookId(id);
-        if (!borrows.isEmpty()) {
-            throw new CustomException("Conflict: Cannot delete book it is associated with borrow records.");
-        } else if (!borrowRepository.findByBookIdAndIsReturnedTrue(id).isEmpty()) {
-            borrows = borrowRepository.findByBookIdAndIsReturnedTrue(id);
-            for(Borrow borrow : borrows) {
-                Integer borrowId = borrow.getBorrowID();
-                borrowRepository.deleteById(borrowId);
+        if (borrows.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        } else if(!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()){
+
+            List<Borrow> returnedBorrows = borrowRepository.findByBookIdAndIsReturnedTrue(id);
+            if (!returnedBorrows.isEmpty()) {
+                for(Borrow borrow : borrows) {
+                    Integer borrowId = borrow.getBorrowID();
+                    borrowRepository.deleteById(borrowId);
+                }
             }
         }
         bookRepository.deleteById(id);
