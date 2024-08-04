@@ -50,8 +50,6 @@ public class BorrowController {
 
     @PostMapping
     public BorrowResponseDTO recordBorrow(@Valid @RequestParam String borrowerId, @RequestParam String bookId) {
-        controllerUtil.validateAndGetBorrower(borrowerId);
-        controllerUtil.validateAndGetBook(bookId);
         return borrowService.recordBorrow(Integer.parseInt(borrowerId), Integer.parseInt(bookId));
     }
 
