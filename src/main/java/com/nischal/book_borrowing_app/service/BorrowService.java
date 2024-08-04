@@ -32,8 +32,8 @@ public class BorrowService {
 
     @Transactional
     public BorrowResponseDTO recordBorrow(Integer borrowerId, Integer bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new CustomException("Not Found: No book found with the provided id"));
-        Borrower borrower = borrowerRepository.findById(borrowerId).orElseThrow(() -> new CustomException("Not Found: No borrower found with the provided id"));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NoSuchElementException("Not Found: No book found with the provided id"));
+        Borrower borrower = borrowerRepository.findById(borrowerId).orElseThrow(() -> new NoSuchElementException("Not Found: No borrower found with the provided id"));
 
         validateBookAvailability(book);
 
@@ -82,7 +82,8 @@ public class BorrowService {
     // TODO: Check if Late Return Fee is paid
     @Transactional
     public BorrowResponseDTO updateBorrow(Integer id, LocalDate returnDateActual) {
-        Borrow borrow = borrowRepository.findById(id).orElseThrow(() -> new CustomException("Not Found: No borrow record found with the provided id"));
+        Borrow borrow = borrowRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Not Found: No borrow record found with" +
+                " the provided id"));
 
         validateReturnStatus(borrow);
         validateReturnDate(borrow, returnDateActual);
@@ -115,7 +116,8 @@ public class BorrowService {
 
     @Transactional
     public void deleteBorrow(Integer id) {
-        Borrow borrow = borrowRepository.findById(id).orElseThrow();
+        Borrow borrow = borrowRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Not Found: Data " +
+                "for corresponding id :- " + id));
         if (borrow.isReturnStatus() && borrow.getLateReturnFee()==0)
         {
             borrowRepository.delete(borrow);

@@ -63,7 +63,6 @@ public class BorrowController {
     @PutMapping("/{id}")
     public BorrowResponseDTO updateBorrow(@PathVariable String id, @RequestBody BorrowRequestDTO borrowRequestDTO) {
         try {
-            controllerUtil.validateAndGetBorrow(id);
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate returnDateActual = LocalDate.parse(borrowRequestDTO.getReturnDateActual(), dateTimeFormatter);
             return borrowService.updateBorrow(Integer.parseInt(id), returnDateActual);
@@ -77,7 +76,6 @@ public class BorrowController {
     @DeleteMapping("/{id}")
     public void deleteBorrow(@PathVariable String id) {
         try {
-            controllerUtil.validateAndGetBorrow(id);
             borrowService.deleteBorrow(Integer.parseInt(id));
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
