@@ -109,15 +109,15 @@ public class BookService {
     @Transactional
     public void deleteBook(Integer id) {
 
-        List<Borrow> borrows = borrowRepository.findByBookId(id);
-        if (borrows.isEmpty()) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
             throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
         } else if(!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()) {
             throw new CustomException("Conflict: Cannot delete book associated with borrow record");
         } else if (!borrowRepository.findByBookIdAndIsReturnedTrue(id).isEmpty()) {
             List<Borrow> returnedBorrows = borrowRepository.findByBookIdAndIsReturnedTrue(id);
             if (!returnedBorrows.isEmpty()) {
-                for(Borrow borrow : borrows) {
+                for(Borrow borrow : returnedBorrows) {
                     Integer borrowId = borrow.getBorrowID();
                     borrowRepository.deleteById(borrowId);
                 }
