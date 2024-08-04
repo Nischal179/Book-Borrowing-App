@@ -30,6 +30,29 @@ public class BorrowService {
     @Autowired
     private BorrowerRepository borrowerRepository;
 
+    public boolean hasAssociatedBorrowRecordsForBook(Integer bookId) {
+        List<Borrow> borrows = borrowRepository.findByBookIdAndIsReturnedTrue(bookId);
+        return !borrows.isEmpty();
+    }
+
+    public void deleteReturnedBorrowsForBook(Integer bookId) {
+        List<Borrow> returnedBorrows = borrowRepository.findByBookIdAndIsReturnedTrue(bookId);
+        for (Borrow borrow : returnedBorrows) {
+            borrowRepository.deleteById(borrow.getBorrowID());
+        }
+    }
+
+    public boolean hasUnreturnedBorrowsForBorrower(Integer borrowerId) {
+        return !borrowRepository.findByBorrowerIdAndIsReturnedFalse(borrowerId).isEmpty();
+    }
+
+    public void deleteReturnedBorrowsForBorrower(Integer borrowerId) {
+        List<Borrow> returnedBorrows = borrowRepository.findByBorrowerIdAndIsReturnedTrue(borrowerId);
+        for (Borrow borrow : returnedBorrows) {
+            borrowRepository.deleteById(borrow.getBorrowID());
+        }
+    }
+
     @Transactional
     public BorrowResponseDTO recordBorrow(Integer borrowerId, Integer bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new NoSuchElementException("Not Found: No book found with the provided id"));

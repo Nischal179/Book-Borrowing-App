@@ -2,6 +2,7 @@ package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.service.BorrowerService;
+import com.nischal.book_borrowing_app.service.LibraryFacade;
 import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
@@ -21,6 +22,9 @@ public class BorrowerController {
 
     @Autowired
     private ControllerUtil controllerUtil;
+
+    @Autowired
+    private LibraryFacade libraryFacade;
 
     @GetMapping
     public List<BorrowerResponseDTO> getAllBorrowers() {
@@ -58,7 +62,7 @@ public class BorrowerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable String id) {
         try {
-            borrowerService.deleteBorrower(Integer.parseInt(id));
+            libraryFacade.deleteBorrower(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);

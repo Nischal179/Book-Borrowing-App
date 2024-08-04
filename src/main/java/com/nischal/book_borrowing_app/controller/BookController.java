@@ -1,6 +1,7 @@
 package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.dto.BookRequestDTO;
 import com.nischal.book_borrowing_app.dto.BookResponseDTO;
+import com.nischal.book_borrowing_app.service.LibraryFacade;
 import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
@@ -22,6 +23,9 @@ public class BookController {
 
     @Autowired
     private ControllerUtil controllerUtil;
+
+    @Autowired
+    private LibraryFacade libraryFacade;
 
     @GetMapping
     public List<BookResponseDTO> getAllBooks() {
@@ -61,7 +65,7 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
 
         try {
-            bookService.deleteBook(Integer.parseInt(id));
+            libraryFacade.deleteBook(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
