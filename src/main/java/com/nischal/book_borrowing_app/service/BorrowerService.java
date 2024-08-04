@@ -36,8 +36,7 @@ public class BorrowerService {
         if (borrower.isEmpty()) {
             throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
         } else {
-            return borrowerRepository.findById(id)
-                    .map(this::convertToDto);
+            return borrower.map(this::convertToDto);
         }
     }
 

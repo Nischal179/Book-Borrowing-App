@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -124,13 +125,24 @@ public class BorrowService {
     }
 
     public Optional<BorrowResponseDTO> getBorrowById(Integer id) {
-        return borrowRepository.findById(id)
-                .map(this::convertToDto);
+        Optional<Borrow> borrow = borrowRepository.findById(id);
+        if (borrow.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        }
+        else {
+            return borrow.map(this::convertToDto);
+        }
     }
 
     public List<BorrowResponseDTO> getBorrowsByBorrowerId(Integer borrowerId) {
-        return borrowRepository.findByBorrowerId(borrowerId)
-                .stream().map(this::convertToDto).collect(Collectors.toList());
+        List<Borrow> borrow = borrowRepository.findByBorrowerId(borrowerId);
+        if (borrow.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + borrowerId);
+        }
+        else {
+            return borrow.stream().map(this::convertToDto).collect(Collectors.toList());
+        }
+
     }
 
     private BorrowResponseDTO convertToDto(Borrow borrow) {

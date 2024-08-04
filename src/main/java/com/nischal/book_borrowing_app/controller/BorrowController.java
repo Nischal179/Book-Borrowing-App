@@ -1,21 +1,18 @@
 package com.nischal.book_borrowing_app.controller;
 
-import com.nischal.book_borrowing_app.dto.BookResponseDTO;
 import com.nischal.book_borrowing_app.dto.BorrowRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowResponseDTO;
-import com.nischal.book_borrowing_app.entity.Borrow;
-import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowService;
 import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/borrows")
@@ -32,14 +29,13 @@ public class BorrowController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BorrowResponseDTO> getBorrowById(@PathVariable String id) {
+    public Optional<BorrowResponseDTO> getBorrowById(@PathVariable String id) {
         try {
-            BorrowResponseDTO borrowResponseDTO = controllerUtil.validateAndGetBorrow(id);
-            return (ResponseEntity.ok(borrowResponseDTO));
+            return (borrowService.getBorrowById(Integer.parseInt(id)));
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
-        return null;
+        return Optional.empty() ;
     }
 
     @GetMapping("/borrower/{borrowerId}")
