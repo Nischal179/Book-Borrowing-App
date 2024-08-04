@@ -79,7 +79,10 @@ public class BorrowerService {
 
     @Transactional
     public void deleteBorrower(Integer id) {
-        if (!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()) {
+        Optional<Borrower> borrower = borrowerRepository.findById(id);
+        if (borrower.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        } else if (!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()) {
             throw new CustomException("Conflict: Cannot delete borrower associated with borrow record");
         }
         else if (!borrowRepository.findByBorrowerIdAndIsReturnedTrue(id).isEmpty()) {

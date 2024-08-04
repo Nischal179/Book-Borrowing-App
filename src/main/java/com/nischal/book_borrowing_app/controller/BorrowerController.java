@@ -58,7 +58,6 @@ public class BorrowerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable String id) {
         try {
-            controllerUtil.validateAndGetBorrower(id);
             borrowerService.deleteBorrower(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
