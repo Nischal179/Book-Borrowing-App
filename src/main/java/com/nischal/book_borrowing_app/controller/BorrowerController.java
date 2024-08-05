@@ -1,19 +1,15 @@
 package com.nischal.book_borrowing_app.controller;
-import com.nischal.book_borrowing_app.customError.CustomException;
 import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
-import com.nischal.book_borrowing_app.entity.Borrower;
 import com.nischal.book_borrowing_app.service.BorrowerService;
-import com.nischal.book_borrowing_app.util.ControllerUtil;
+import com.nischal.book_borrowing_app.service.LibraryFacade;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +20,7 @@ public class BorrowerController {
     private BorrowerService borrowerService;
 
     @Autowired
-    private ControllerUtil controllerUtil;
+    private LibraryFacade libraryFacade;
 
     @GetMapping
     public List<BorrowerResponseDTO> getAllBorrowers() {
@@ -32,14 +28,13 @@ public class BorrowerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BorrowerResponseDTO> getBorrowerById(@PathVariable String id) {
+    public Optional<BorrowerResponseDTO> getBorrowerById(@PathVariable String id) {
         try {
-            BorrowerResponseDTO borrowerResponseDTO = controllerUtil.validateAndGetBorrower(id);
-            return ResponseEntity.ok(borrowerResponseDTO);
+            return (borrowerService.getBorrowerById(Integer.parseInt(id)));
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @PostMapping
@@ -51,8 +46,6 @@ public class BorrowerController {
     @PutMapping("/{id}")
     public ResponseEntity<BorrowerResponseDTO> updateBorrower(@PathVariable String id, @Valid @RequestBody BorrowerRequestDTO borrowerRequestDTO) {
         try {
-
-            controllerUtil.validateAndGetBorrower(id);
             BorrowerResponseDTO borrowerResponseDTO = borrowerService.updateBorrower(Integer.parseInt(id), borrowerRequestDTO);
             return ResponseEntity.ok(borrowerResponseDTO);
 
@@ -65,8 +58,7 @@ public class BorrowerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBorrower(@PathVariable String id) {
         try {
-            controllerUtil.validateAndGetBorrower(id);
-            borrowerService.deleteBorrower(Integer.parseInt(id));
+            libraryFacade.deleteBorrower(Integer.parseInt(id));
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             ExceptionUtil.handleException(id,e);

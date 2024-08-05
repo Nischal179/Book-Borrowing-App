@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,8 +32,12 @@ public class BorrowerService {
     }
 
     public Optional<BorrowerResponseDTO> getBorrowerById(Integer id) {
-        return borrowerRepository.findById(id)
-                .map(this::convertToDto);
+        Optional<Borrower> borrower =  borrowerRepository.findById(id);
+        if (borrower.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        } else {
+            return borrower.map(this::convertToDto);
+        }
     }
 
     @Transactional
@@ -57,17 +62,26 @@ public class BorrowerService {
 
     @Transactional
     public BorrowerResponseDTO updateBorrower(Integer id, BorrowerRequestDTO borrowerRequestDTO) {
-        Borrower borrower = borrowerRepository.findById(id).orElseThrow();
-        borrower.setBorrowerName(borrowerRequestDTO.getBorrowerName());
-        borrower.setAddress(borrowerRequestDTO.getAddress());
-        borrower.setMobileNo(borrowerRequestDTO.getMobileNo());
-        borrower.setEmail(borrowerRequestDTO.getEmail());
-        return convertToDto(borrowerRepository.save(borrower));
+        Optional<Borrower> borrower = borrowerRepository.findById(id);
+        if (borrower.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        }
+        else {
+            Borrower extractedBorrower = borrower.get();
+            extractedBorrower.setBorrowerName(borrowerRequestDTO.getBorrowerName());
+            extractedBorrower.setAddress(borrowerRequestDTO.getAddress());
+            extractedBorrower.setMobileNo(borrowerRequestDTO.getMobileNo());
+            extractedBorrower.setEmail(borrowerRequestDTO.getEmail());
+            return convertToDto(borrowerRepository.save(extractedBorrower));
+        }
     }
 
     @Transactional
     public void deleteBorrower(Integer id) {
-        if (!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()) {
+        Optional<Borrower> borrower = borrowerRepository.findById(id);
+        if (borrower.isEmpty()) {
+            throw new NoSuchElementException("Not Found: Data for corresponding id :- " + id);
+        } else if (!borrowRepository.findByBorrowerIdAndIsReturnedFalse(id).isEmpty()) {
             throw new CustomException("Conflict: Cannot delete borrower associated with borrow record");
         }
         else if (!borrowRepository.findByBorrowerIdAndIsReturnedTrue(id).isEmpty()) {
