@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface BorrowRepository extends JpaRepository<Borrow,Integer> {
     List<Borrow> findByBorrowerId(Integer borrowerId);
     @Query("SELECT b FROM Borrow b WHERE b.book.id = :bookId AND b.returnStatus = false")
-    List<Borrow> findByBookId(Integer bookId);
+    List<Borrow> findByBookIdAndIsReturnedFalse(Integer bookId);
 
     @Query("SELECT b FROM Borrow b WHERE b.book.id = :bookId AND b.returnStatus = true")
     List<Borrow> findByBookIdAndIsReturnedTrue(Integer bookId);

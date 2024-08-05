@@ -2,7 +2,6 @@ package com.nischal.book_borrowing_app.controller;
 import com.nischal.book_borrowing_app.dto.BookRequestDTO;
 import com.nischal.book_borrowing_app.dto.BookResponseDTO;
 import com.nischal.book_borrowing_app.service.LibraryFacade;
-import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
-
-    @Autowired
-    private ControllerUtil controllerUtil;
 
     @Autowired
     private LibraryFacade libraryFacade;

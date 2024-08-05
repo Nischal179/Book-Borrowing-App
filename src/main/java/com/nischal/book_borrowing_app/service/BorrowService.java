@@ -31,7 +31,7 @@ public class BorrowService {
     private BorrowerRepository borrowerRepository;
 
     public boolean hasAssociatedBorrowRecordsForBook(Integer bookId) {
-        List<Borrow> borrows = borrowRepository.findByBookIdAndIsReturnedTrue(bookId);
+        List<Borrow> borrows = borrowRepository.findByBookIdAndIsReturnedFalse(bookId);
         return !borrows.isEmpty();
     }
 

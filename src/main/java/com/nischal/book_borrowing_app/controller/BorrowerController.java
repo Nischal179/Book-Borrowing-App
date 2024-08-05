@@ -3,7 +3,6 @@ import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.service.BorrowerService;
 import com.nischal.book_borrowing_app.service.LibraryFacade;
-import com.nischal.book_borrowing_app.util.ControllerUtil;
 import com.nischal.book_borrowing_app.util.ExceptionUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,6 @@ public class BorrowerController {
 
     @Autowired
     private BorrowerService borrowerService;
-
-    @Autowired
-    private ControllerUtil controllerUtil;
 
     @Autowired
     private LibraryFacade libraryFacade;
