@@ -112,9 +112,11 @@ public class BorrowService {
         validateReturnDate(borrow, returnDateActual);
 
         Borrower borrower = borrow.getBorrower();
+        Book book = borrow.getBook();
         borrow.setReturnDateActual(returnDateActual);
         borrower.setBooksBorrowed(borrower.getBooksBorrowed() - 1);
         borrow.setReturnStatus(true);
+        book.setQuantity(book.getQuantity()+1);
 
         if (returnDateActual.isAfter(borrow.getReturnDateExpected())) {
             int lateReturnDays = returnDateActual.compareTo(borrow.getReturnDateExpected());
