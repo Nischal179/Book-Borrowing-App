@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nischal.book_borrowing_app.entity.Book;
 import com.nischal.book_borrowing_app.service.BookService;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,9 +42,13 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity <BookResponseDTO> addBook(@Valid @RequestBody BookRequestDTO bookRequestDTO) {
-         BookResponseDTO createdBook = bookService.addBook(bookRequestDTO);
-        return ResponseEntity.ok(createdBook);
+    public ResponseEntity <BookResponseDTO> addBook(@Valid @RequestBody BookRequestDTO bookRequestDTO, UriComponentsBuilder ucb) {
+        BookResponseDTO createdBook = bookService.addBook(bookRequestDTO);
+        URI locationOfNewBook = ucb
+                .path("books/{id}")
+                .buildAndExpand(createdBook.getBookId())
+                .toUri();
+        return ResponseEntity.created(locationOfNewBook).build();
     }
 
     @PutMapping("/{id}")
