@@ -1,4 +1,5 @@
 package com.nischal.book_borrowing_app.controller;
+import com.nischal.book_borrowing_app.dto.BookResponseDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerRequestDTO;
 import com.nischal.book_borrowing_app.dto.BorrowerResponseDTO;
 import com.nischal.book_borrowing_app.service.BorrowerService;
@@ -8,7 +9,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,9 +41,14 @@ public class BorrowerController {
     }
 
     @PostMapping
-    public ResponseEntity<BorrowerResponseDTO> addBorrower(@Valid @RequestBody BorrowerRequestDTO borrowerRequestDTO) {
+    public ResponseEntity<BorrowerResponseDTO> addBorrower(@Valid @RequestBody BorrowerRequestDTO borrowerRequestDTO,
+                                                           UriComponentsBuilder ucb                                                      ) {
         BorrowerResponseDTO createdBorrower = borrowerService.addBorrower(borrowerRequestDTO);
-        return ResponseEntity.ok(createdBorrower);
+        URI locationOfNewBorrower = ucb
+                .path("books/{id}")
+                .buildAndExpand(createdBorrower.getBorrowerId())
+                .toUri();
+        return ResponseEntity.created(locationOfNewBorrower).build();
     }
 
     @PutMapping("/{id}")

@@ -59,32 +59,6 @@ public class BookService {
         return convertToDto(bookRepository.save(book));
     }
 
-//    @Transactional
-//    public Borrow recordBorrow(Integer borrowerId, Integer bookId) {
-//        Borrow borrow = new Borrow();
-//        borrow.setBorrower(borrowerRepository.findById(borrowerId).orElseThrow());
-//        Book book = bookRepository.findById(bookId).orElseThrow();
-//
-//        // Check if the book is available
-//        if (book.getQuantity() <= 0) {
-//            throw new CustomException("Book is not available for borrowing.");
-//        }
-//
-//        borrow.setBook(book);
-//        borrow.setBorrowDate(LocalDate.now());
-//
-//        // Decrease the quantity of the borrowed book
-//        book.setQuantity(book.getQuantity() - 1);
-//
-//        // Set availability to false if quantity is zero
-//        if (book.getQuantity()-1 <= 0) {
-//            book.setAvailableStatus(false);
-//        }
-//
-//        bookRepository.save(book);
-//        return borrowRepository.save(borrow);
-//    }
-
     @Transactional
     public BookResponseDTO updateBook(Integer id, BookRequestDTO bookRequestDTO) {
         Optional<Book> book = bookRepository.findById(id);
