@@ -1,6 +1,9 @@
-package com.nischal.book_borrowing_app.model;
+package com.nischal.book_borrowing_app.entity;
 
 import jakarta.persistence.*;
+
+import javax.xml.crypto.Data;
+import java.util.Date;
 
 @Entity
 @Table(name = "library_user")
@@ -16,6 +19,12 @@ public class LibraryUser {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
+    @Column(name = "expiry_date")
+    private Date expiryDate;
 
     public Integer getId() {
         return id;
@@ -39,5 +48,21 @@ public class LibraryUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }
