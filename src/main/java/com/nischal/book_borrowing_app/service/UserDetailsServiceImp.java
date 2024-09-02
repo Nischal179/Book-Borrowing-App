@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.service;
 
+import com.nischal.book_borrowing_app.dto.UserPrincipal;
 import com.nischal.book_borrowing_app.entity.LibraryUser;
 import com.nischal.book_borrowing_app.repository.LibraryUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Optional<LibraryUser> users = userRepository.findByUsername(username);
+        LibraryUser users = userRepository.findByUsername(username);
 
         if (users == null) {
             throw new UsernameNotFoundException("User not found");
