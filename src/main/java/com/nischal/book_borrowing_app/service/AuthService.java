@@ -35,18 +35,26 @@ public class AuthService {
 
         if (authentication.isAuthenticated()) {
             String accessToken = jwtService.generateToken(users.getUsername());
+            String refreshToken = jwtService.generateRefreshToken(users.getUsername());
 
-            addCookiesToResponse(response, accessToken);
+            addCookiesToResponse(response, accessToken, refreshToken);
         }
     }
 
-    private void addCookiesToResponse(HttpServletResponse response, String accessToken) {
+    private void addCookiesToResponse(HttpServletResponse response, String accessToken, String refreshToken) {
         Cookie accessTokenCookie = new Cookie("access_token", accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true); // Set this to true if using HTTPS
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(60 * 60 * 24); // 24 hrs before cookie expires
 
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true); // Set this to true if using HTTPS
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+
         response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
     }
 }
