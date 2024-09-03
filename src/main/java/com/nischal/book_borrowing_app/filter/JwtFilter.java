@@ -11,7 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -43,6 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         logger.info("Access token expired.");
                     } else {
                         logger.info("Access token is still valid.");
+                        authenticateWithToken(accessToken, request);
                     }
                 } else {
                     logger.warn("Access token is null or malformed.");
@@ -64,5 +68,18 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
         return null;
+    }
+
+    private void authenticateWithToken(String accessToken, HttpServletRequest request) {
+        String username = jwtService.extractUserName(accessToken);
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsServiceImp.loadUserByUsername(username);
+            if (jwtService.validateToken(accessToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
     }
 }
