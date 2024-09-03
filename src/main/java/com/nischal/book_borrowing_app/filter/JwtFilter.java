@@ -36,14 +36,17 @@ public class JwtFilter extends OncePerRequestFilter {
         // Get access token from cookies
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             String accessToken = getTokenFromCookies(request, "access_token");
+            String refreshToken = getTokenFromCookies(request, "refresh_token");
 
             logger.info("Access Token: " + accessToken);
+            logger.info("Refresh Token: " + refreshToken);
 
             try {
                 if (accessToken != null && accessToken.contains(".")) {
                     // Check if the access token is expired
                     if (jwtService.isTokenExpired(accessToken)) {
                         logger.info("Access token expired.");
+                        handleExpiredAccessToken(accessToken, refreshToken, response, request);
                     } else {
                         logger.info("Access token is still valid.");
                         authenticateWithToken(accessToken, request);
@@ -52,7 +55,8 @@ public class JwtFilter extends OncePerRequestFilter {
                     logger.warn("Access token is null or malformed.");
                 }
             } catch (ExpiredJwtException e) {
-                logger.error("Access token expired and cannot be parsed.");
+                logger.error("Access token expired and cannot be parsed.", e);
+                handleExpiredAccessToken(e.getClaims().getSubject(), refreshToken, response, request);
             }
         }
         filterChain.doFilter(request,response);
@@ -81,5 +85,28 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+    }
+
+    private void handleExpiredAccessToken(String username, String refreshToken, HttpServletResponse response,
+                                          HttpServletRequest request) {
+        if (refreshToken != null && jwtService.validateRefreshToken(username, refreshToken)) {
+            logger.info("Refresh token is valid. Generating new access token.");
+            String newAccessToken = jwtService.generateToken(username);
+            logger.info("New Access Token: " + newAccessToken);
+
+            addCookieToResponse(newAccessToken, response);
+            authenticateWithToken(newAccessToken, request);
+        } else {
+            logger.warn("Invalid or expired refresh token");
+        }
+    }
+
+    private void addCookieToResponse(String value, HttpServletResponse response) {
+        Cookie cookie = new Cookie("access_token",value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24); // 24 hours (1 day)
+        response.addCookie(cookie);
     }
 }
