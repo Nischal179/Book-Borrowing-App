@@ -1,5 +1,6 @@
 package com.nischal.book_borrowing_app.service;
 
+import com.nischal.book_borrowing_app.entity.LibraryUser;
 import com.nischal.book_borrowing_app.repository.LibraryUserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,9 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -43,7 +42,7 @@ public class JwtService {
         return generateToken(username, jwtExpirationInMs);
     }
 
-    // Method to generate refresh token
+    // Method to generate refresh token with custom expiration
     public String generateToken(String username, int expirationTimeInMs) {
 
         logger.info("Generating token for users: " + username);
@@ -103,5 +102,53 @@ public class JwtService {
     // Method to extract expiration from JWT
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public String generateRefreshToken(String username) {
+        String refreshToken = generateRandomString();
+        Date expiryDate = new Date(System.currentTimeMillis() + refreshExpirationInMs); // 3days
+
+        LibraryUser users = userRepository.findByUsername(username);
+        if (users != null) {
+            users.setRefreshToken(encoder.encode(refreshToken));
+            users.setExpiryDate(expiryDate);
+            userRepository.save(users);
+        }
+
+        return refreshToken;
+    }
+
+    private String generateRandomString() {
+        byte[] randomBytes = new byte[32];
+        new Random().nextBytes(randomBytes);
+        return Base64.getEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
+    // Method to validate refresh token
+    public boolean validateRefreshToken(String username, String refreshToken) {
+        logger.info("Validating refresh token for user: " + username);
+        LibraryUser users = userRepository.findByUsername(username);
+        if (users != null) {
+            if (isTokenExpired(users.getExpiryDate())) {
+                logger.warn("Refresh token for users: " + username + " is expired.");
+                return false;
+            }
+
+            boolean matches = encoder.matches(refreshToken, users.getRefreshToken());
+            if (matches) {
+                logger.info("Refresh token is valid.");
+                return true;
+            } else {
+                logger.warn("Refresh token mismatch for user: " + username);
+            }
+        } else {
+            logger.warn("No user found with username: " + username);
+        }
+        return false;
+    }
+
+    // New method to check if a Date object is expired
+    public boolean isTokenExpired(Date expiryDate) {
+        return expiryDate.before(new Date());
     }
 }
