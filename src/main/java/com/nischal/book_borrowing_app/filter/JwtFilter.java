@@ -55,7 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     logger.warn("Access token is null or malformed.");
                 }
             } catch (ExpiredJwtException e) {
-                logger.error("Access token expired and cannot be parsed.", e);
+                logger.error("Access token expired and cannot be parsed.");
                 handleExpiredAccessToken(e.getClaims().getSubject(), refreshToken, response, request);
             }
         }
